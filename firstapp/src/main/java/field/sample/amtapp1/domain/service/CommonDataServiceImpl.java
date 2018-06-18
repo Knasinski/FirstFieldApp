@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommonDataServiceImpl implements CommonDataService {
 	private static final Logger logger = LoggerFactory.getLogger(CommonDataServiceImpl.class);
-	private static final String BASE_URL = "http://192.168.99.100:8083/field_api/v2/";
+	private static final String BASE_URL = "http://192.168.99.102:8083/field_api/v2/";
 	
 	public String getInstances(String classId) {
 		String url = BASE_URL + classId + "s";

@@ -18,13 +18,12 @@ public interface ControllerService {
 //	*
 //	* The instance id of the @param controllerId controller.
 //	*/
-//	public void queryCncData(String controllerId);
+	public void queryCncData(String controllerId);
 //	
 //	/**
 //	* Acquires the instance/history/relations information of the specified controller.
 //	*
 //	* The instance id of the @param controllerId controller.
 //	*/
-//	public void queryRobotData(String controllerId);
-	
+//	public void queryRobotData(String controllerId);	
 }

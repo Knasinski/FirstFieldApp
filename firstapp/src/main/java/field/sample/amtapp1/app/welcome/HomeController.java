@@ -18,8 +18,7 @@ import field.sample.amtapp1.domain.service.ControllerService;
 */
 @Controller
 public class HomeController {
-private static final Logger logger = LoggerFactory
-.getLogger(HomeController.class);
+private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
 // Storage path in the persistence area
 //private static final String STRAGE_PATH = "/mnt/field/app/app/amtapp1";
@@ -33,7 +32,8 @@ private ControllerService controllerServiceImpl;
 @RequestMapping(value = "/", method = {RequestMethod.GET, RequestMethod.POST})
 
 public String home(Locale locale, Model model) {
-logger.info("Welcome home! The client locale is {}.", locale);
+	logger.info("Welcome home! The client locale is {}.", locale);
+	
 	// Comment out the date display processing that was automatically generated in the blank project.
 	// Date date = new Date();
 	// DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG,
@@ -42,9 +42,20 @@ logger.info("Welcome home! The client locale is {}.", locale);
 	// String formattedDate = dateFormat.format(date);
 	//
 	// model.addAttribute("serverTime", formattedDate);
+	
 	// Acquire the list from ControllerService and add it to the model.
 	List<field.sample.amtapp1.domain.model.Controller> controllers = controllerServiceImpl.findAll();
+	
 	model.addAttribute("controllers", controllers);
+	
+	for(field.sample.amtapp1.domain.model.Controller controller:controllers) {
+		
+		if("cnc".equals(controller.getControllerType())){
+		// Acquire the instance/history/relations of CNC.
+		controllerServiceImpl.queryCncData(controller.getInstanceId());
+		}
+	}
+	
 	return "welcome/home";
 	}
 }

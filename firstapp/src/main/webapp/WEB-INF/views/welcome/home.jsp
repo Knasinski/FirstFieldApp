@@ -25,20 +25,25 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 
 <!-- Add the list display of controller information -->
 <table>
-<thead>
-<tr>
-<th>controller id</th>
-<th>controller name</th>
-</tr>
-</thead>
-<tbody>
-<c:forEach items="${controllers}" var="controller">
-<tr>
-<td>${controller.instanceId}</td>
-<td>${controller.name}</td>
-</tr>
-</c:forEach>
-</tbody>
+	<thead>
+		<tr>
+			<th>controller id</th>
+			<th>controller name</th>
+			<!-- Add the display of controller_type -->
+			<th>controller type</th>
+		</tr>
+	</thead>
+	
+	<tbody>
+		<c:forEach items="${controllers}" var="controller">
+			<tr>
+				<td>${controller.instanceId}</td>
+				<td>${controller.name}</td>
+				<!-- Add the display of controller_type -->
+				<td>${controller.controllerType}</td>
+			</tr>
+		</c:forEach>
+	</tbody>
 </table>
 </div>
 </body>

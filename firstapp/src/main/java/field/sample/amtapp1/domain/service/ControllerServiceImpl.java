@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 
 import field.sample.amtapp1.domain.model.CommonDataController;
-//import field.sample.amtapp1.domain.model.CommonDataControllerCnc;
+import field.sample.amtapp1.domain.model.CommonDataControllerCnc;
+import field.sample.amtapp1.domain.model.CommonDataControllerHistory;
+import field.sample.amtapp1.domain.model.CommonDataControllerLatest;
+import field.sample.amtapp1.domain.model.CommonDataControllerRelations;
 //import field.sample.amtapp1.domain.model.CommonDataControllerHistory;
 //import field.sample.amtapp1.domain.model.CommonDataControllerLatest;
 //import field.sample.amtapp1.domain.model.CommonDataControllerRelations;
@@ -65,5 +68,77 @@ public class ControllerServiceImpl implements ControllerService {
 	return list;
 	}
 
+	public void queryCncData(String controllerId) {
+	// Acquisition of instance
+	String instanceJson = commonDataServiceImpl.getInstance("controller",controllerId);
+	
+		if(instanceJson == null) {
+		logger.warn("failure : get controller " + controllerId);
+		return;
+	}
+	
+	CommonDataController controller = new Gson().fromJson(instanceJson, CommonDataController.class);
+	logger.debug("id : " + controller.id);
+	logger.debug("name : " + controller.name);
+	logger.debug("type : " + controller.controller_type);
+	logger.debug("ip : " + controller.ip_address);
+	logger.debug("manu : " + controller.manufacturer);
+	
+	if(controller.link != null) {
+		logger.debug("link.history : " + controller.link.history);
+		logger.debug("link.instance : " + controller.link.instance);
+		logger.debug("link.latest : " + controller.link.latest);
+		logger.debug("link.relations : " + controller.link.relations);
+	}
+	
+	// Acquisition of latest
+	String latestJson = commonDataServiceImpl.getLatest("controller",controllerId);
+		if(latestJson == null) {
+		logger.warn("failure : get latest " + controllerId);
+		return;
+	}
+	
+	CommonDataControllerLatest latest = new Gson().fromJson(latestJson, CommonDataControllerLatest.class);
+	
+	logger.debug("latest model : " + latest.model);
+	// Acquisition of history
+	String historyJson = commonDataServiceImpl.getHistory("controller",controllerId);
+	
+	if(historyJson == null) {
+		logger.warn("failure : get history " + controllerId);
+		return;
+	}
+	
+	CommonDataControllerHistory[] histories = new Gson().fromJson(historyJson, CommonDataControllerHistory[].class);
+	
+	for (CommonDataControllerHistory history : histories) {
+		logger.debug("history unixtime : " + history.unixtime);
+		logger.debug("history link : " + history.link);
+		logger.debug("history relations : " + history.relations);
+	}
+	
+	// Acquisition of relations
+	String relationsJson = commonDataServiceImpl.getRelations("controller",controllerId);
+	
+	if(relationsJson == null) {
+		logger.warn("failure : get relations" + controllerId);
+		return;
+	}
+	
+		CommonDataControllerRelations relations = new Gson().fromJson(relationsJson, CommonDataControllerRelations.class);
+		
+		if (relations.controller_cnc != null) {
+			for(CommonDataControllerCnc controllerCnc : relations.controller_cnc) {
+				logger.debug("controller_cnc id : " + controllerCnc.id);
+				
+				if(controllerCnc.link != null) {
+					logger.debug("controller_cnc history : " + controllerCnc.link.history);
+					logger.debug("controller_cnc instance : " + controllerCnc.link.instance);
+					logger.debug("controller_cnc latest : " + controllerCnc.link.latest);
+					logger.debug("controller_cnc relations : " + controllerCnc.link.relations);
+				}
+			}
+		}	
+	}
 }
 	
