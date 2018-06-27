@@ -31,19 +31,6 @@ public class ControllerServiceImpl implements ControllerService {
 	@Override
 	public List<Controller> findAll()  {
 		ArrayList<Controller> list = new ArrayList<>();
-		// Comment out the code from the previous chapter.
-		// // In this stage of the chapter, a fixed list of controllers to be displayed is generated.
-		// // -> This will be modified to acquire a list from the common data.
-		// list.add(new Controller("controllerId0001", "nameAAAA"));
-		// list.add(new Controller("controllerId0002", "nameBBBB"));
-		// list.add(new Controller("controllerId0003", "nameCCCC"));
-		// list.add(new Controller("controllerId0004", "nameDDDD"));
-		// list.add(new Controller("controllerId0005", "nameEEEE"));
-		// list.add(new Controller("controllerId0006", "nameFFFF"));
-		// list.add(new Controller("controllerId0007", "nameGGGG"));
-		// list.add(new Controller("controllerId0008", "nameHHHH"));
-		// list.add(new Controller("controllerId0009", "nameIIII"));		
-		// list.add(new Controller("controllerId0010", "nameJJJJ"));
 		
 		// Acquire a list of instances in the controller class from CommonDataService in a JSON string.
 		String controllersJson = commonDataServiceImpl.getInstances("controller");
@@ -58,7 +45,9 @@ public class ControllerServiceImpl implements ControllerService {
 		Integer i=1;
 		//CommonDataController
 		for(CommonDataController controller:controllers) {
-			if ("robot_controller".equals(controller.controller_type)) {
+			controller.controller_type = getControllerType(controller);
+			
+			if (!"Unknown".equals(controller.controller_type)) {
 				logger.debug("id : " + controller.id + "_" + i.toString());
 				logger.debug("name : " + controller.name);
 				// Add the controller that has the id and name acquired from the common data to the list.
@@ -140,5 +129,34 @@ public class ControllerServiceImpl implements ControllerService {
 			}
 		}	
 	}
+	
+	private String getControllerType(CommonDataController controller) {
+		String ct = "Unknown";
+		
+		if (controller.controller_type.equals(ct) || (controller.controller_type.length() == 0)) {
+			String mb = commonDataServiceImpl.getRelations("controller", controller.id);
+			
+			if ((mb.length() != 0) && mb.contains("id")) {
+				if (mb.contains("controller_injection"))
+					ct = "controller_injection";
+				else if (mb.contains("controller_plc"))
+					ct = "controller_plc";
+				else if (mb.contains("controller_cnc"))
+					ct = "controller_cnc";
+				else if (mb.contains("controller_robot_controller"))
+					ct = "controller_robot_controller";
+				else if (mb.contains("controller_wirecut"))
+					ct = "controller_wirecut";
+				else if (mb.contains("controller_sensor"))
+					ct = "controller_sensor";
+				else if (mb.contains("controller_laser"))
+					ct = "controller_laser";
+			}
+		}
+		
+		return ct;
+	}
+	
+	
 }
 	

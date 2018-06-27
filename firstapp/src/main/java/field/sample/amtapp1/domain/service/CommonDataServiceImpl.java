@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -11,37 +12,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class CommonDataServiceImpl implements CommonDataService {
 	private static final Logger logger = LoggerFactory.getLogger(CommonDataServiceImpl.class);
-	private static final String BASE_URL = "http://192.168.99.102:8083/field_api/v2/";
+	private static final String BASE_URL = "http://192.168.99.100:8083/field_api/v3/class/";
+	private static final String InstanceStr = "/instance/";
 	
 	public String getInstances(String classId) {
-		String url = BASE_URL + classId + "s";
+		String url = BASE_URL + classId;
 		logger.debug("getInstances : " + url);
 		return getJson(url);
 	}
 	
 	public String getInstance(String classId, String instanceId) {
-		String url = BASE_URL + classId + "s/" + instanceId;
+		String url = BASE_URL + classId + InstanceStr + instanceId;
 		logger.debug("getInstance : " + url);
 		return getJson(url);
 	}
 	
 	public String getLatest(String classId, String instanceId) {
-		String url = BASE_URL + classId + "s/" + instanceId + "/latest";
+		String url = BASE_URL + classId + InstanceStr + instanceId + "/latest";
 		logger.debug("getLatest : " + url);
 		return getJson(url);
 	}
 		
 	public String getHistory(String classId, String instanceId) {
-		String url = BASE_URL + classId + "s/" + instanceId + "/history";
+		String url = BASE_URL + classId + InstanceStr + instanceId + "/history";
 		logger.debug("getHistory : " + url);
 		return getJson(url);
 	}
 		
 	public String getRelations(String classId, String instanceId) {
-		String url = BASE_URL + classId + "s/" + instanceId + "/relations";
+		String url = BASE_URL + classId + InstanceStr + instanceId + "/relations";
 		logger.debug("getRelations : " + url);
 		return getJson(url);
 	}
