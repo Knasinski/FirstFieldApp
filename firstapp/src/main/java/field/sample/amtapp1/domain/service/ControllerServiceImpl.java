@@ -2,6 +2,7 @@ package field.sample.amtapp1.domain.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.String;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +21,11 @@ import field.sample.amtapp1.domain.model.CommonDataControllerRelations;
 //import field.sample.amtapp1.domain.model.CommonDataControllerRelations;
 import field.sample.amtapp1.domain.model.Controller;
 
-
 @Service
 public class ControllerServiceImpl implements ControllerService {	
 	private static final Logger logger = LoggerFactory.getLogger(ControllerServiceImpl.class);
+
+	public static double meaningless = 0.0;
 	
 	@Autowired
 	private CommonDataService commonDataServiceImpl;
@@ -47,11 +49,12 @@ public class ControllerServiceImpl implements ControllerService {
 		for(CommonDataController controller:controllers) {
 			controller.controller_type = getControllerType(controller);
 			
-			if (!"Unknown".equals(controller.controller_type)) {
+			if ("controller_robot_controller".equals(controller.controller_type)) {
 				logger.debug("id : " + controller.id + "_" + i.toString());
 				logger.debug("name : " + controller.name);
 				// Add the controller that has the id and name acquired from the common data to the list.
-				list.add(new Controller(controller.id, controller.name, controller.controller_type));
+				
+				list.add(new Controller(controller.id, controller.name, controller.controller_type, getRobotPoseString("status_robot_group00001")));
 			}
 		}
 	return list;
@@ -155,6 +158,68 @@ public class ControllerServiceImpl implements ControllerService {
 		}
 		
 		return ct;
+	}
+	
+	private String getRobotStatusGroup(CommonDataController controller) {
+		String ct = "Unknown";
+		
+		if (controller.controller_type.equals(ct) || (controller.controller_type.length() == 0)) {
+			String mb = commonDataServiceImpl.getRelations("controller", controller.id);
+			
+			if ((mb.length() != 0) && mb.contains("id")) {
+				if (mb.contains("controller_injection"))
+					ct = "controller_injection";
+				else if (mb.contains("controller_plc"))
+					ct = "controller_plc";
+				else if (mb.contains("controller_cnc"))
+					ct = "controller_cnc";
+				else if (mb.contains("controller_robot_controller"))
+					ct = "controller_robot_controller";
+				else if (mb.contains("controller_wirecut"))
+					ct = "controller_wirecut";
+				else if (mb.contains("controller_sensor"))
+					ct = "controller_sensor";
+				else if (mb.contains("controller_laser"))
+					ct = "controller_laser";
+			}
+		}
+		
+		return ct;
+	}
+	
+	private String getRobotPoseString(String statusGroupId)
+	{
+		String rc = "Invalid";
+		String mb = commonDataServiceImpl.getLatest("status_robot_group", statusGroupId);
+		
+		if ((mb != null) && (mb.length() != 0) && mb.contains("joint_position") && !mb.contains("\"joint_position\":null")) {
+			rc = mb.substring(mb.indexOf("value")+8);
+			rc = rc.substring(0,rc.indexOf("]"));
+			
+			String[] items = rc.split(",");
+			
+			mb = "";
+			Boolean first = true;
+			
+			
+			for (String s : items) {
+				double v = Double.parseDouble(s);
+				
+				if (first) {
+					first=false;
+					String t = String.format("%.2f", v);
+					mb += t;
+					meaningless=v;
+				}
+				else {
+					String t = String.format(", %.2f", v);
+					mb +=  t;
+				}				
+			}
+			
+			rc = mb;
+		}
+		return rc;
 	}
 	
 	

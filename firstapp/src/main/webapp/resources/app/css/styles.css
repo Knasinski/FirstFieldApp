@@ -80,6 +80,7 @@ th, td {
   text-align:left;
   padding:5px 10px;
   border-bottom:1px solid #e5e5e5;
+  color: blue;
 }
 
 dt {
@@ -160,7 +161,7 @@ header ul a strong {
 }
 
 section {
-  width:500px;
+  width:1000px;
   float:right;
   padding-bottom:50px;
 }
