@@ -5,8 +5,6 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.text.DateFormat;
-import java.util.Date;
 
 import field.sample.amtapp1.app.welcome.HomeController;
 

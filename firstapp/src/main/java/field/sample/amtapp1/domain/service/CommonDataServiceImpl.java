@@ -43,10 +43,22 @@ public class CommonDataServiceImpl implements CommonDataService {
 		return getJson(url);
 	}
 		
-	public String getRelations(String classId, String instanceId) {
-		String url = BASE_URL + classId + InstanceStr + instanceId + "/relations";
-		logger.debug("getRelations : " + url);
-		return getJson(url);
+	public int getCount(String classId, String instanceId) {
+		String url = BASE_URL + classId + InstanceStr + instanceId + "/count";
+		logger.debug("getCount : " + url);
+		String rc = getJson(url);
+		
+		if (rc.contains("count") && rc.contains(":")) {
+			try {
+				int k = Integer.parseInt(rc);
+				
+				return k;
+				} catch (Exception e) {
+					logger.warn("failedConvertToInt : " + rc);
+				}
+		}
+		
+		return 0;
 	}
 		
 	private String getJson(String urlString) {

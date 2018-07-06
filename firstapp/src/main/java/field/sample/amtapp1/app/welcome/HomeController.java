@@ -25,7 +25,6 @@ import field.sample.amtapp1.domain.service.ControllerService;
 public class HomeController {
 public static Locale Glocale;
 private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-public static String serverTime = "XXXX";
 
 @Autowired
 private ControllerService controllerServiceImpl;
@@ -39,11 +38,6 @@ private ControllerService controllerServiceImpl;
 public String home(Locale locale, Model model) throws InterruptedException {
 	logger.info("Welcome home! The client locale is {}.", locale);
 	Glocale = locale;
-	
-	Date date = new Date();
-	DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG, locale);
-	String formattedDate = dateFormat.format(date);
-	model.addAttribute("serverTime", formattedDate);
 	
 	// Acquire the list from ControllerService and add it to the model.
 	List<field.sample.amtapp1.domain.model.Controller> controllers = controllerServiceImpl.findAll();
