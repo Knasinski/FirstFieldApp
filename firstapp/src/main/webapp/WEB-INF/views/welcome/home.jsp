@@ -5,6 +5,7 @@
 <title>Home</title>
 <link rel="stylesheet"
 href="${pageContext.request.contextPath}/resources/app/css/styles.css">
+
 </head>
 <body>
 <div id="wrapper">
@@ -14,6 +15,9 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 <h1>Hello world!</h1>
 <p>The time on the server is ${serverTime}.</p>
 -->
+<p>${pageContext.request.contextPath}/resources/app/css/styles.css</p>
+<div id="serverData">Here is where the server sent data will appear</div>
+
 <div style="text-align:center">
     <div >
       	<img width="450" alt="AMT Logo" src="https://zv29bqv028dj9ycg-zippykid.netdna-ssl.com/wp-content/uploads/2017/05/amt_logo_color_nav.png">
@@ -49,5 +53,19 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 	</tbody>
 </table>
 </div>
+<script type="text/javascript">
+if(typeof(EventSource)!=="undefined") {
+	//create an object, passing it the name and location of the server side script
+	var eSource = new EventSource("FieldServlet");
+	//detect message receipt
+	eSource.onmessage = function(event) {
+		//write the received data to the page
+		document.getElementById("serverData").innerHTML = event.data;
+	};
+}
+else {
+	document.getElementById("serverData").innerHTML="Whoops! Your browser doesn't receive server-sent events.";
+}
+</script>
 </body>
 </html>

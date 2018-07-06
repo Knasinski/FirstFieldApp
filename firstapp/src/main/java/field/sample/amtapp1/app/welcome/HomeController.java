@@ -23,6 +23,7 @@ import field.sample.amtapp1.domain.service.ControllerService;
 */
 @Controller
 public class HomeController {
+public static Locale Glocale;
 private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 public static String serverTime = "XXXX";
 
@@ -37,13 +38,12 @@ private ControllerService controllerServiceImpl;
 
 public String home(Locale locale, Model model) throws InterruptedException {
 	logger.info("Welcome home! The client locale is {}.", locale);
+	Glocale = locale;
 	
 	Date date = new Date();
 	DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG,DateFormat.LONG, locale);
 	String formattedDate = dateFormat.format(date);
-	double mmm = field.sample.amtapp1.domain.service.ControllerServiceImpl.meaningless;
 	model.addAttribute("serverTime", formattedDate);
-	model.addAttribute("meaningLess", mmm);
 	
 	// Acquire the list from ControllerService and add it to the model.
 	List<field.sample.amtapp1.domain.model.Controller> controllers = controllerServiceImpl.findAll();
