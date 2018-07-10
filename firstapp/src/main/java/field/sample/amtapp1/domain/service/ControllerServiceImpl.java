@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
+import field.sample.amtapp1.domain.controller_servers.RobotControllerServerImpl;
 import field.sample.amtapp1.domain.model.CommonDataController;
 import field.sample.amtapp1.domain.model.CommonDataControllerCnc;
 import field.sample.amtapp1.domain.model.CommonDataControllerHistory;
@@ -53,6 +54,8 @@ public class ControllerServiceImpl implements ControllerService {
 				logger.debug("id : " + controller.id + "_" + i.toString());
 				logger.debug("name : " + controller.name);
 				// Add the controller that has the id and name acquired from the common data to the list.
+				
+				RobotControllerServerImpl rci = new RobotControllerServerImpl(controller.id, controller.name, commonDataServiceImpl);
 				
 				list.add(new Controller(controller.id, controller.name, controller.controller_type, getRobotPoseString("status_robot_group00001")));
 			}
