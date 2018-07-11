@@ -55,7 +55,7 @@ public class ControllerServiceImpl implements ControllerService {
 				logger.debug("name : " + controller.name);
 				// Add the controller that has the id and name acquired from the common data to the list.
 				
-				RobotControllerServerImpl rci = new RobotControllerServerImpl(controller.id, controller.name, commonDataServiceImpl);
+				RobotControllerServerImpl rci = new RobotControllerServerImpl(controller.id, commonDataServiceImpl);
 				
 				list.add(new Controller(controller.id, controller.name, controller.controller_type, getRobotPoseString("status_robot_group00001")));
 			}

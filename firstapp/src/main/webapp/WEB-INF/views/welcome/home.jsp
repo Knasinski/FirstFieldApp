@@ -10,7 +10,7 @@ body {font-family: Arial;}
 .tab {
     overflow: hidden;
     border: 1px solid #ccc;
-    background-color: #4bc161;
+    background-color: #104B99;
 }
 
 /* Style the buttons inside the tab */
@@ -32,7 +32,7 @@ body {font-family: Arial;}
 
 /* Create an active/current tablink class */
 .tab button.active {
-    background-color: #6d99e8;
+    background-color: #A8B538;
 }
 
 /* Style the tab content */

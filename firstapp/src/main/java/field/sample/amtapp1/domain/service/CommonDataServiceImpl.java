@@ -56,7 +56,10 @@ public class CommonDataServiceImpl implements CommonDataService {
 		
 		if (rc.contains("count") && rc.contains(":")) {
 			try {
-				int k = Integer.parseInt(rc);
+				String s = rc.substring(rc.indexOf(":") + 1);
+				s = s.substring(0, s.indexOf("}"));
+				
+				int k = Integer.parseInt(s);
 				
 				return k;
 				} catch (Exception e) {
