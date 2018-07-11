@@ -1,4 +1,4 @@
-package field.sample.amtapp1.app.welcome;
+package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,17 +16,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class FieldServlet
+ * Servlet implementation class ClockServlet
  */
-@WebServlet("/FieldServlet")
-public class FieldServlet extends HttpServlet {
+@WebServlet("/ClockServlet")
+public class ClockServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static Locale mylocale = HomeController.Glocale;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public FieldServlet() {
+    public ClockServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
