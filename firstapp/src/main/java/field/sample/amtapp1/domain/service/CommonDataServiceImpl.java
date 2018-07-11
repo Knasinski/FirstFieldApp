@@ -21,37 +21,37 @@ public class CommonDataServiceImpl implements CommonDataService {
 	
 	public String getInstances(String classId) {
 		String url = BASE_URL + classId;
-		logger.debug("getInstances : " + url);
+//		logger.debug("getInstances : " + url);
 		return getJson(url);
 	}
 	
 	public String getInstance(String classId, String instanceId) {
 		String url = BASE_URL + classId + InstanceStr + instanceId;
-		logger.debug("getInstance : " + url);
+//		logger.debug("getInstance : " + url);
 		return getJson(url);
 	}
 	
 	public String getLatest(String classId, String instanceId) {
 		String url = BASE_URL + classId + InstanceStr + instanceId + "/latest";
-		logger.debug("getLatest : " + url);
+//		logger.debug("getLatest : " + url);
 		return getJson(url);
 	}
 		
 	public String getHistory(String classId, String instanceId) {
 		String url = BASE_URL + classId + InstanceStr + instanceId + "/history";
-		logger.debug("getHistory : " + url);
+//		logger.debug("getHistory : " + url);
 		return getJson(url);
 	}
 	
 	public String getRelations(String classId, String instanceId) {
 		String url = BASE_URL + classId + InstanceStr + instanceId + "/relations";
-		logger.debug("getHistory : " + url);
+//		logger.debug("getRelations : " + url);
 		return getJson(url);
 	}
 		
 	public int getCount(String classId, String instanceId) {
 		String url = BASE_URL + classId + InstanceStr + instanceId + "/count";
-		logger.debug("getCount : " + url);
+//		logger.debug("getCount : " + url);
 		String rc = getJson(url);
 		
 		if (rc.contains("count") && rc.contains(":")) {

@@ -28,12 +28,15 @@ public class ControllerServiceImpl implements ControllerService {
 
 	public static double meaningless = 0.0;
 	
+	public static ArrayList<RobotControllerServerImpl> RcList = new ArrayList<>();
+	
 	@Autowired
 	private CommonDataService commonDataServiceImpl;
 	
 	@Override
 	public List<Controller> findAll()  {
 		ArrayList<Controller> list = new ArrayList<>();
+		RcList = new ArrayList<>();
 		
 		// Acquire a list of instances in the controller class from CommonDataService in a JSON string.
 		String controllersJson = commonDataServiceImpl.getInstances("controller");
@@ -56,6 +59,9 @@ public class ControllerServiceImpl implements ControllerService {
 				// Add the controller that has the id and name acquired from the common data to the list.
 				
 				RobotControllerServerImpl rci = new RobotControllerServerImpl(controller.id, commonDataServiceImpl);
+				
+				if (rci.DataGood)
+					RcList.add(rci);
 				
 				list.add(new Controller(controller.id, controller.name, controller.controller_type, getRobotPoseString("status_robot_group00001")));
 			}
@@ -163,32 +169,6 @@ public class ControllerServiceImpl implements ControllerService {
 		return ct;
 	}
 	
-	private String getRobotStatusGroup(CommonDataController controller) {
-		String ct = "Unknown";
-		
-		if (controller.controller_type.equals(ct) || (controller.controller_type.length() == 0)) {
-			String mb = commonDataServiceImpl.getRelations("controller", controller.id);
-			
-			if ((mb.length() != 0) && mb.contains("id")) {
-				if (mb.contains("controller_injection"))
-					ct = "controller_injection";
-				else if (mb.contains("controller_plc"))
-					ct = "controller_plc";
-				else if (mb.contains("controller_cnc"))
-					ct = "controller_cnc";
-				else if (mb.contains("controller_robot_controller"))
-					ct = "controller_robot_controller";
-				else if (mb.contains("controller_wirecut"))
-					ct = "controller_wirecut";
-				else if (mb.contains("controller_sensor"))
-					ct = "controller_sensor";
-				else if (mb.contains("controller_laser"))
-					ct = "controller_laser";
-			}
-		}
-		
-		return ct;
-	}
 	
 	private String getRobotPoseString(String statusGroupId)
 	{

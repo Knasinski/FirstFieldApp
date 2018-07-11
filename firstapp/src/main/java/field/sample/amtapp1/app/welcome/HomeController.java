@@ -1,5 +1,6 @@
 package field.sample.amtapp1.app.welcome;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -11,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import field.sample.amtapp1.domain.controller_servers.RobotControllerServerImpl;
 import field.sample.amtapp1.domain.service.ControllerService;
 
 
@@ -55,6 +57,7 @@ public String home(Locale locale, Model model) throws InterruptedException {
 //		Thread.sleep(500);
 //	}
 	}
+	
 	
 	return "welcome/home";
 	}

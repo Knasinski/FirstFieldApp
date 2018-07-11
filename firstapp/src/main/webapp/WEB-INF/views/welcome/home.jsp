@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {font-family: Arial;}
+body {font-family: Arial; background-color: LightBlue;}
 
 /* Style the tab */
 .tab {
@@ -14,6 +14,8 @@ body {font-family: Arial;}
 }
 
 /* Style the buttons inside the tab */
+.tabcontent a, .tabcontent span, .tabcontent tr, .tabcontent div { white-space: pre; }
+
 .tab button {
     background-color: inherit;
     float: left;
@@ -59,7 +61,6 @@ body {font-family: Arial;}
 href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 
 </head>
-<body>
 <div id="wrapper">
 
 
@@ -67,7 +68,7 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 <h1>Hello world!</h1>
 <p>The time on the server is ${serverTime}.</p>
 -->
-<div id="serverData">Here is where the server sent data will appear</div>
+<div id="clockData">Here is where the server sent data will appear</div>
 
 <div style="text-align:center">
     <div >
@@ -112,8 +113,11 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 </div> 
 
 <div id="RobotJoints" class="tabcontent">
-  <h3>RobotJoints</h3>
-  <p>List of RobotJoints</p>
+	<h3>RobotJoints</h3>	
+	
+	<div id="r1jaData">Here is where the server sent data will appear</div>
+	<div id="r2jaData">Here is where the server sent data will appear</div>
+
 </div> 
 <div id="IOs" class="tabcontent">
   <h3>RobotJoints</h3>
@@ -149,16 +153,32 @@ function openAtab(evt, cityName) {
 
 
 if(typeof(EventSource)!=="undefined") {
-	//create an object, passing it the name and location of the server side script
 	var eSource = new EventSource("ClockServlet");
 	//detect message receipt
 	eSource.onmessage = function(event) {
 		//write the received data to the page
-		document.getElementById("serverData").innerHTML = event.data;
+		document.getElementById("clockData").innerHTML = event.data;
 	};
+	
+	//create an object, passing it the name and location of the server side script
+	var eSource = new EventSource("R1JointPoseServlet");
+	//detect message receipt
+	eSource.onmessage = function(event) {
+		//write the received data to the page
+		document.getElementById("r1jaData").innerHTML = event.data;
+	};
+	
+	//create an object, passing it the name and location of the server side script
+	var eSource = new EventSource("R2JointPoseServlet");
+	//detect message receipt
+	eSource.onmessage = function(event) {
+		//write the received data to the page
+		document.getElementById("r2jaData").innerHTML = event.data;
+	};
+	
 }
 else {
-	document.getElementById("serverData").innerHTML="Whoops! Your browser doesn't receive server-sent events.";
+	document.getElementById("clockData").innerHTML="Whoops! Your browser doesn't receive server-sent events.";
 }
 </script>
 </body>

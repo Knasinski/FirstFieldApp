@@ -55,12 +55,53 @@ public class RobotControllerServerImpl {
 				DataGood = true;
 			}
 	}
+	
+	public String getRobotJas()
+	{
+		String rc = "Invalid";
+		String mb = "";
+		
+		if (getCurrentJas()) {
+			try {
+			for (int i=0; i<6; ++i) {
+				String t = String.format("%-15.3f          \t", JointPosition[i]);
+				mb += t;
+			}
+			
+			rc = mb;
+			} catch (Exception e) { }
+		}
+		
+		return rc;
+	}
+	
+	private boolean getCurrentJas() {
+		String mb = commonDataServiceImp.getLatest("status_robot_group", statusRobotGroupId);
+		
+		try {
+			if ((mb != null) && (mb.length() != 0) && mb.contains("joint_position") && !mb.contains("\"joint_position\":null")) {
+				String rc = mb.substring(mb.indexOf("value")+8);
+				rc = rc.substring(0,rc.indexOf("]"));
+				
+				String[] items = rc.split(",");
+				
+				for (int i=0; i<items.length; ++i) {
+					JointPosition[i] = Double.parseDouble(items[i]);
+				}
+			}
+		} catch (Exception e) {
+			return false;
+		}
+		
+		return true;
+	}
+	
 	private boolean getControllerName() {
 		String mb = commonDataServiceImp.getInstance("controller", controllerId);
 		DecodeName rc = new DecodeName(mb);
 		
 		if (rc.Good)
-			robotControllerId = rc.result;
+			controllerName = rc.result;
 		
 		return rc.Good;
 	}
