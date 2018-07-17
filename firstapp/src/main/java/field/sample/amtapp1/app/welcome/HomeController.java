@@ -1,6 +1,5 @@
 package field.sample.amtapp1.app.welcome;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -12,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import field.sample.amtapp1.domain.controller_servers.RobotControllerServerImpl;
 import field.sample.amtapp1.domain.service.ControllerService;
 
 
@@ -24,6 +22,8 @@ import field.sample.amtapp1.domain.service.ControllerService;
 public class HomeController {
 public static Locale Glocale;
 private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+
+private static boolean FirstInit = true;
 
 @Autowired
 private ControllerService controllerServiceImpl;
@@ -39,7 +39,8 @@ public String home(Locale locale, Model model) throws InterruptedException {
 	Glocale = locale;
 	
 	// Acquire the list from ControllerService and add it to the model.
-	List<field.sample.amtapp1.domain.model.Controller> controllers = controllerServiceImpl.findAll();
+	List<field.sample.amtapp1.domain.model.Controller> controllers = controllerServiceImpl.findAll(FirstInit);
+	FirstInit = false;
 	
 	logger.info("Controllers = {" + controllers.toString() + "}");
 	

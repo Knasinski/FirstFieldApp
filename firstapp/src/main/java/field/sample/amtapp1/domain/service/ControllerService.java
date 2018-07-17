@@ -11,7 +11,7 @@ public interface ControllerService {
 	*
 	* List of @return controller.
 	*/
-	public List<Controller> findAll();
+	public List<Controller> findAll(boolean InitializeRobots);
 	
 //	/**
 //	* Acquires the instance/history/relations information of the specified controller.

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
-import field.sample.amtapp1.domain.controller_servers.RobotControllerServerImpl;
+import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 import field.sample.amtapp1.domain.model.CommonDataController;
 import field.sample.amtapp1.domain.model.CommonDataControllerCnc;
 import field.sample.amtapp1.domain.model.CommonDataControllerHistory;
@@ -28,13 +28,13 @@ public class ControllerServiceImpl implements ControllerService {
 
 	public static double meaningless = 0.0;
 	
-	public static ArrayList<RobotControllerServerImpl> RcList = new ArrayList<>();
+	public static ArrayList<RobotControllerServer> RcList;
 	
 	@Autowired
 	private CommonDataService commonDataServiceImpl;
 	
 	@Override
-	public List<Controller> findAll()  {
+	public List<Controller> findAll(boolean RcListBuild)  {
 		ArrayList<Controller> list = new ArrayList<>();
 		RcList = new ArrayList<>();
 		
@@ -58,14 +58,19 @@ public class ControllerServiceImpl implements ControllerService {
 				logger.debug("name : " + controller.name);
 				// Add the controller that has the id and name acquired from the common data to the list.
 				
-				RobotControllerServerImpl rci = new RobotControllerServerImpl(controller.id, commonDataServiceImpl);
-				
-				if (rci.DataGood)
-					RcList.add(rci);
+				if (RcListBuild) {
+					RobotControllerServer rci = new RobotControllerServer(controller.id, commonDataServiceImpl);
+					
+					if (rci.DataGood) {
+						if (!RcList.contains(rci))
+							RcList.add(rci);
+					}
+				}
 				
 				list.add(new Controller(controller.id, controller.name, controller.controller_type, getRobotPoseString("status_robot_group00001")));
 			}
 		}
+		
 	return list;
 	}
 

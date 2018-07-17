@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import field.sample.amtapp1.domain.controller_servers.RobotControllerServerImpl;
+import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 
 /**
  * Servlet implementation class JointPoseServlet
@@ -38,10 +38,10 @@ public class R1JointPoseServlet extends HttpServlet {
 		PrintWriter writer = response.getWriter();
 
 		while (!stopme) {
-			ArrayList<RobotControllerServerImpl> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
+			ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
 			String n = r.get(0).controllerName;
 			String p = r.get(0).getRobotJas();
-			String s = String.format("%-20s%s", n, p);
+			String s = String.format("%-10s%s", n, p);
 
 			writer.write("data: "+ s +"\n\n");
 			writer.flush();

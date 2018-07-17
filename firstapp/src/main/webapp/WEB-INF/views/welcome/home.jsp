@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-body {font-family: Arial; background-color: LightBlue;}
+body {font-family: "Courier New"; background-color: LightBlue;}
 
 /* Style the tab */
 .tab {
@@ -14,12 +14,12 @@ body {font-family: Arial; background-color: LightBlue;}
 }
 
 /* Style the buttons inside the tab */
-.tabcontent a, .tabcontent span, .tabcontent tr, .tabcontent div { white-space: pre; }
+.tabcontent h3, .tabcontent span, .tabcontent tr, .tabcontent div { white-space: pre; font-family: "Courier New"; font-size: 20px; color: #104B99}
 
 .tab button {
     background-color: inherit;
     float: left;
-    border: none;
+    border: 2px solid grey;
     outline: none;
     cursor: pointer;
     padding: 14px 16px;
@@ -68,7 +68,7 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 <h1>Hello world!</h1>
 <p>The time on the server is ${serverTime}.</p>
 -->
-<div id="clockData">Here is where the server sent data will appear</div>
+<div id="clockData">clockData</div>
 
 <div style="text-align:center">
     <div >
@@ -113,15 +113,32 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 </div> 
 
 <div id="RobotJoints" class="tabcontent">
-	<h3>RobotJoints</h3>	
+	<h3>Name                                          Joint Position                                                              Joint Odometer</h3>	
 	
-	<div id="r1jaData">Here is where the server sent data will appear</div>
-	<div id="r2jaData">Here is where the server sent data will appear</div>
+	<div id="r1jaData">r1jaData</div>
+	<div id="r2jaData">r2jaData</div>
 
 </div> 
 <div id="IOs" class="tabcontent">
-  <h3>RobotJoints</h3>
-  <p>List of IOs</p>
+	<h3>Name   Variable</h3>	
+	
+	<div id="r1VarData1">r1VarData1</div>
+	<div id="r1VarData2">r1VarData2</div>
+	<div id="r1VarData3">r1VarData3</div>
+	<div id="r1VarData4">r1VarData4</div>
+	<div id="r1VarData5">r1VarData5</div>
+	<div id="r1VarData6">r1VarData6</div>
+	<div id="r1VarData7">r1VarData7</div>
+	<div id="r1VarData8">r1VarData8</div>
+	
+	<div id="r2VarData1">r2VarData1</div>
+	<div id="r2VarData2">r2VarData2</div>
+	<div id="r2VarData3">r2VarData3</div>
+	<div id="r2VarData4">r2VarData4</div>
+	<div id="r2VarData5">r2VarData5</div>
+	<div id="r2VarData6">r2VarData6</div>
+	<div id="r2VarData7">r2VarData7</div>
+	<div id="r2VarData8">r2VarData8</div>
 </div>
 
 
@@ -159,6 +176,38 @@ if(typeof(EventSource)!=="undefined") {
 		//write the received data to the page
 		document.getElementById("clockData").innerHTML = event.data;
 	};
+
+	var eSource = new EventSource("R1StatVarServlet");
+	//detect message receipt
+	eSource.onmessage = function(event) {
+		//Split the data received
+		var sed = event.data.split("@", 8);
+		
+		document.getElementById("r1VarData1").innerHTML = sed[0];
+		document.getElementById("r1VarData2").innerHTML = sed[1];
+		document.getElementById("r1VarData3").innerHTML = sed[2];
+		document.getElementById("r1VarData4").innerHTML = sed[3];
+		document.getElementById("r1VarData5").innerHTML = sed[4];
+		document.getElementById("r1VarData6").innerHTML = sed[5];
+		document.getElementById("r1VarData7").innerHTML = sed[6];
+		document.getElementById("r1VarData8").innerHTML = sed[7];
+	};
+
+	var eSource = new EventSource("R2StatVarServlet");
+	//detect message receipt
+	eSource.onmessage = function(event) {
+		//Split the data received
+		var sed = event.data.split("@", 8);
+		
+		document.getElementById("r2VarData1").innerHTML = sed[0];
+		document.getElementById("r2VarData2").innerHTML = sed[1];
+		document.getElementById("r2VarData3").innerHTML = sed[2];
+		document.getElementById("r2VarData4").innerHTML = sed[3];
+		document.getElementById("r2VarData5").innerHTML = sed[4];
+		document.getElementById("r2VarData6").innerHTML = sed[5];
+		document.getElementById("r2VarData7").innerHTML = sed[6];
+		document.getElementById("r2VarData8").innerHTML = sed[7];
+	};
 	
 	//create an object, passing it the name and location of the server side script
 	var eSource = new EventSource("R1JointPoseServlet");
@@ -175,7 +224,6 @@ if(typeof(EventSource)!=="undefined") {
 		//write the received data to the page
 		document.getElementById("r2jaData").innerHTML = event.data;
 	};
-	
 }
 else {
 	document.getElementById("clockData").innerHTML="Whoops! Your browser doesn't receive server-sent events.";

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,19 +14,27 @@ import javax.servlet.http.HttpServletResponse;
 import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 
 /**
- * Servlet implementation class R2JointPoseServlet
+ * Servlet implementation class ClockServlet
  */
-@WebServlet("/R2JointPoseServlet")
-public class R2JointPoseServlet extends HttpServlet {
+@WebServlet("/R2StatVarServlet")
+public class R2StatVarServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public R2JointPoseServlet() {
+    public R2StatVarServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
+
+	/**
+	 * @see Servlet#getServletConfig()
+	 */
+	public ServletConfig getServletConfig() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
@@ -34,16 +43,15 @@ public class R2JointPoseServlet extends HttpServlet {
 		boolean stopme = false;
 		response.setContentType("text/event-stream");
 		response.setCharacterEncoding("UTF-8");
+		ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
 
 		PrintWriter writer = response.getWriter();
 
 		while (!stopme) {
-			ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
-			String n = r.get(1).controllerName;
-			String p = r.get(1).getRobotJas();
-			String s = String.format("%-10s%s", n, p);
-
-			writer.write("data: "+ s +"\n\n");
+			String d = r.get(1).getStatusRobotVars();
+			
+			writer.write("data: " + d + "\n\n");
+			
 			writer.flush();
 			
 			try {
@@ -53,6 +61,10 @@ public class R2JointPoseServlet extends HttpServlet {
 			}
 		}
 		writer.close();
+		
+		
+		// TODO Auto-generated method stub
+//		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
@@ -61,6 +73,27 @@ public class R2JointPoseServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
+	}
+
+	/**
+	 * @see HttpServlet#doPut(HttpServletRequest, HttpServletResponse)
+	 */
+	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * @see HttpServlet#doHead(HttpServletRequest, HttpServletResponse)
+	 */
+	protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * @see HttpServlet#doTrace(HttpServletRequest, HttpServletResponse)
+	 */
+	protected void doTrace(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 	}
 
 }

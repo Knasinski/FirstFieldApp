@@ -1,0 +1,1 @@
+status_robot_controller_variable00001	R1_RO3
