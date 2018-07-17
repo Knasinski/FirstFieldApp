@@ -38,12 +38,17 @@ public String home(Locale locale, Model model) throws InterruptedException {
 	logger.info("Welcome home! The client locale is {}.", locale);
 	Glocale = locale;
 	
+	String JointHeader = String.format("%-10s%-9s%-9s%-9s%-9s%-9s%-9s%4s%-15s%-15s%-15s%-15s%-15s%-15s", 
+			"Name", "J1", "J2", "J3", "J4", "J5", "J6", " ",
+			"dJ1", "dJ2", "dJ3", "dJ4", "Jd5", "Jd6");
+	
 	// Acquire the list from ControllerService and add it to the model.
 	List<field.sample.amtapp1.domain.model.Controller> controllers = controllerServiceImpl.findAll(FirstInit);
 	FirstInit = false;
 	
 	logger.info("Controllers = {" + controllers.toString() + "}");
 	
+	model.addAttribute("Jhdrs", JointHeader);
 	model.addAttribute("controllers", controllers);
 	
 //	for (int i=0; i<10000; ++i) {	

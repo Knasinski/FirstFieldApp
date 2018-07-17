@@ -80,8 +80,8 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
  
  <div class="tab">
   <button class="tablinks" onclick="openAtab(event, 'Controllers')">Controllers</button>
-  <button class="tablinks" onclick="openAtab(event, 'RobotJoints')">Robot Joints</button>
-  <button class="tablinks" onclick="openAtab(event, 'IOs')">IOs</button>
+  <button class="tablinks" onclick="openAtab(event, 'Position Data')">Position Data</button>
+  <button class="tablinks" onclick="openAtab(event, 'IO Data')">IO Data</button>
 </div>
 
 <!-- Tab content -->
@@ -112,9 +112,9 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 	</table>
 </div> 
 
-<div id="RobotJoints" class="tabcontent">
-	<h3>Name                                          Joint Position                                                              Joint Odometer</h3>	
-	
+<div id="Position Data" class="tabcontent">
+	<h3>                                Joint Position                                                      Joint Odometer</h3>	
+	<div>${Jhdrs}</div>
 	<div id="r1jaData">r1jaData</div>
 	<div id="r2jaData">r2jaData</div>
 	<hr>
@@ -123,7 +123,7 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 	<div id="r2CartData">r2CartData</div>
 
 </div> 
-<div id="IOs" class="tabcontent">
+<div id="IO Data" class="tabcontent">
 	<h3>Name   Variable</h3>	
 	
 	<div id="r1VarData1">r1VarData1</div>
@@ -232,7 +232,7 @@ if(typeof(EventSource)!=="undefined") {
 	};
 	
 	//create an object, passing it the name and location of the server side script
-	var eSource = new EventSource("R1CartPosServlet");
+	var eSource = new EventSource("CartPosServlet");
 	//detect message receipt
 	eSource.onmessage = function(event) {
 		var sed = event.data.split("@", 2);
