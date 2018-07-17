@@ -134,10 +134,51 @@ public class RobotControllerServer {
 		else 
 			JrecStarted = true;
 		
-		for (int i=0; i<6; ++i)
-			LastJointPosition[i] = JointPosition[i];
+	for (int i=0; i<6; ++i)
+		LastJointPosition[i] = JointPosition[i];
 		
-		return true;
+	return true;
+	}
+	
+	public String getRobotCartPos()
+	{
+		String rc = "Invalid";
+		String mb = "";
+		
+		if (getCurrentCartPos()) {
+			try {
+			for (int i=0; i<6; ++i) {
+				String t = String.format("%-9.3f\0", CartesianPosition[i]);
+				mb += t;
+			}
+			
+			rc = mb;
+			} catch (Exception e) { }
+		}
+		
+		return rc;
+	}
+	
+	private boolean getCurrentCartPos() {
+		String mb = commonDataServiceImp.getLatest("status_robot_group", statusRobotGroupId);
+	
+	try {
+		if ((mb != null) && (mb.length() != 0) && mb.contains("cartesian_position") && !mb.contains("\"cartesian_position\":null")) {
+			mb = mb.substring(mb.indexOf("cartesian_position"));
+			String rc = mb.substring(mb.indexOf("value")+8);
+			rc = rc.substring(0,rc.indexOf("]"));
+			
+			String[] items = rc.split(",");
+			
+			for (int i=0; i<6; ++i) {
+				CartesianPosition[i] = Double.parseDouble(items[i]);
+			}
+		}
+		} catch (Exception e) {
+			return false;
+		}
+	
+	return true;		
 	}
 	
 	private boolean getControllerName() {

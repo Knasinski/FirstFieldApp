@@ -117,6 +117,10 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 	
 	<div id="r1jaData">r1jaData</div>
 	<div id="r2jaData">r2jaData</div>
+	<hr>
+	
+	<div id="r1CartData">r1CartData</div>
+	<div id="r2CartData">r2CartData</div>
 
 </div> 
 <div id="IOs" class="tabcontent">
@@ -130,6 +134,7 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 	<div id="r1VarData6">r1VarData6</div>
 	<div id="r1VarData7">r1VarData7</div>
 	<div id="r1VarData8">r1VarData8</div>
+	<div id="r1VarData9">r1VarData9</div>
 	
 	<div id="r2VarData1">r2VarData1</div>
 	<div id="r2VarData2">r2VarData2</div>
@@ -139,6 +144,7 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 	<div id="r2VarData6">r2VarData6</div>
 	<div id="r2VarData7">r2VarData7</div>
 	<div id="r2VarData8">r2VarData8</div>
+	<div id="r2VarData9">r2VarData9</div>
 </div>
 
 
@@ -167,8 +173,6 @@ function openAtab(evt, cityName) {
 } 
 
 
-
-
 if(typeof(EventSource)!=="undefined") {
 	var eSource = new EventSource("ClockServlet");
 	//detect message receipt
@@ -181,7 +185,7 @@ if(typeof(EventSource)!=="undefined") {
 	//detect message receipt
 	eSource.onmessage = function(event) {
 		//Split the data received
-		var sed = event.data.split("@", 8);
+		var sed = event.data.split("@", 9);
 		
 		document.getElementById("r1VarData1").innerHTML = sed[0];
 		document.getElementById("r1VarData2").innerHTML = sed[1];
@@ -191,13 +195,14 @@ if(typeof(EventSource)!=="undefined") {
 		document.getElementById("r1VarData6").innerHTML = sed[5];
 		document.getElementById("r1VarData7").innerHTML = sed[6];
 		document.getElementById("r1VarData8").innerHTML = sed[7];
+		document.getElementById("r1VarData9").innerHTML = sed[8];
 	};
 
 	var eSource = new EventSource("R2StatVarServlet");
 	//detect message receipt
 	eSource.onmessage = function(event) {
 		//Split the data received
-		var sed = event.data.split("@", 8);
+		var sed = event.data.split("@", 9);
 		
 		document.getElementById("r2VarData1").innerHTML = sed[0];
 		document.getElementById("r2VarData2").innerHTML = sed[1];
@@ -207,6 +212,7 @@ if(typeof(EventSource)!=="undefined") {
 		document.getElementById("r2VarData6").innerHTML = sed[5];
 		document.getElementById("r2VarData7").innerHTML = sed[6];
 		document.getElementById("r2VarData8").innerHTML = sed[7];
+		document.getElementById("r2VarData9").innerHTML = sed[8];
 	};
 	
 	//create an object, passing it the name and location of the server side script
@@ -223,6 +229,15 @@ if(typeof(EventSource)!=="undefined") {
 	eSource.onmessage = function(event) {
 		//write the received data to the page
 		document.getElementById("r2jaData").innerHTML = event.data;
+	};
+	
+	//create an object, passing it the name and location of the server side script
+	var eSource = new EventSource("R1CartPosServlet");
+	//detect message receipt
+	eSource.onmessage = function(event) {
+		var sed = event.data.split("@", 2);
+		document.getElementById("r1CartData").innerHTML = sed[0];
+		document.getElementById("r2CartData").innerHTML = sed[1];
 	};
 }
 else {
