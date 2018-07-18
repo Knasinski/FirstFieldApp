@@ -16,14 +16,14 @@ import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 /**
  * Servlet implementation class ClockServlet
  */
-@WebServlet("/R1StatVarServlet")
-public class R1StatVarServlet extends HttpServlet {
+@WebServlet("/RobotTaskServlet")
+public class RobotTaskServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public R1StatVarServlet() {
+    public RobotTaskServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -44,11 +44,15 @@ public class R1StatVarServlet extends HttpServlet {
 		response.setContentType("text/event-stream");
 		response.setCharacterEncoding("UTF-8");
 		ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
+		
+		String s = r.get(0).getStatusRobotTasks();
 
 		PrintWriter writer = response.getWriter();
+		
+		int di=0;
 
 		while (!stopme) {
-			String d = r.get(0).getStatusRobotVars();
+			String d = String.format("%s@%s", r.get(0).getStatusRobotTasks(), r.get(1).getStatusRobotTasks());
 			
 			writer.write("data: " + d + "\n\n");
 			

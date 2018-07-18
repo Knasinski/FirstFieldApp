@@ -16,14 +16,14 @@ import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 /**
  * Servlet implementation class ClockServlet
  */
-@WebServlet("/R2StatVarServlet")
-public class R2StatVarServlet extends HttpServlet {
+@WebServlet("/StatVarServlet")
+public class StatVarServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public R2StatVarServlet() {
+    public StatVarServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -48,9 +48,12 @@ public class R2StatVarServlet extends HttpServlet {
 		PrintWriter writer = response.getWriter();
 
 		while (!stopme) {
-			String d = r.get(1).getStatusRobotVars();
+			String d = r.get(0).getStatusRobotVars();
+			String d2 = r.get(1).getStatusRobotVars();
 			
-			writer.write("data: " + d + "\n\n");
+			String s = String.format("%s%s", d, d2);
+			
+			writer.write("data: " + s + "\n\n");
 			
 			writer.flush();
 			

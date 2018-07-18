@@ -44,6 +44,8 @@ public String home(Locale locale, Model model) throws InterruptedException {
 	
 	String CartHeader = String.format("%-10s%-9s%-9s%-9s%-9s%-9s%-9s","Name", "X", "Y", "Z", "W", "P", "R");
 	
+	String TaskHeader = String.format("%-10s%-10s%-10s%-10s%-10s%-10s%-10s%-10s%-10s","Robot", "Main", "Sub", "Status", "Line", "", "", "", "");
+	
 	// Acquire the list from ControllerService and add it to the model.
 	List<field.sample.amtapp1.domain.model.Controller> controllers = controllerServiceImpl.findAll(FirstInit);
 	FirstInit = false;
@@ -52,6 +54,7 @@ public String home(Locale locale, Model model) throws InterruptedException {
 	
 	model.addAttribute("Jhdrs", JointHeader);
 	model.addAttribute("Chdrs", CartHeader);
+	model.addAttribute("Thdrs", TaskHeader);
 	
 	model.addAttribute("controllers", controllers);
 	

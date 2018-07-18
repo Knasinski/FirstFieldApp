@@ -3,6 +3,7 @@ package field.sample.amtapp1.domain.controller_servers;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
 import field.sample.amtapp1.domain.controller_variables.RobotControllerVariable;
 import field.sample.amtapp1.domain.model.CommonDataLink;
 import field.sample.amtapp1.domain.service.CommonDataService;
@@ -15,18 +16,22 @@ public class RobotControllerServer {
 	private String RobotControllTypeStr = "controller_robot_controller";
 	private String ControllerRobotGroupTypeStr = "controller_robot_group";
 	private String StatusRCVarTypeStr = "status_robot_controller_variable";
+	private String StatusRCTaskTypeStr = "status_robot_controller_task";
 	
 	
 	private String ControllerRobotGroupFindStr = "\"controller_robot_group\":";
 	private String StatusRobotGroupFindStr = "\"status_robot_group\":";
 	private String StatusRCVarFindStr = "\"id\":\"status_robot_controller_variable";
 	private String RobotConfigFindStr = "\"configuration\":";
+	private String StatusRCTaskFindStr = "\"id\":\"status_robot_controller_task";
+	private String NameFindStr = "\"name\":";
 
 	public String controllerId = "";
 	public String controllerName = "";
 	public String robotControllerId = "";
 	public String controllerRobotGroupId = "";
 	public String statusRobotGroupId = "";
+	public String statusRobotTaskId = "";
 	
 	
 	public String jointPose = "";
@@ -46,6 +51,7 @@ public class RobotControllerServer {
 
 	ArrayList<String> StatusRcVars = new ArrayList<String>();
 	ArrayList<RobotControllerVariable> StatusRcVarList = new ArrayList<RobotControllerVariable>();
+	ArrayList<RobotControllerTask> StatusRcTaskList = new ArrayList<RobotControllerTask>();
 	
 	public boolean DataGood;
 	private boolean JrecStarted = false;
@@ -64,12 +70,25 @@ public class RobotControllerServer {
 				getCount(RobotControllTypeStr, robotControllerId) && 
 				getControllerRobotGroupId() &&
 				getStatusRobotGroup() &&
-				getStatusRcVariables()) {
+				getStatusRcVariables() &&
+				getStatusRobotTaskId()) {
 				getStatusRcVarList();
 				DataGood = true;
 			}
 	}
 	
+	public String getStatusRobotTasks() {
+		String mb = String.format("%-10s", controllerName);
+		getStatusRcTaskList();
+		
+		for (int i=0; i<StatusRcTaskList.size(); ++i) {
+			RobotControllerTask t = StatusRcTaskList.get(i);
+			
+			mb += String.format("%-10s%-10s%-10s%-10s", t.Name, t.ProgramName, t.Status, t.LineNumber);
+		}
+		
+		return mb;
+	}
 	public String getStatusRobotVars() {
 		String mb = "";
 		
@@ -235,6 +254,22 @@ public class RobotControllerServer {
 		return false;				
 	}
 	
+	private boolean getStatusRobotTaskId() {
+		String mb = commonDataServiceImp.getRelations(RobotControllTypeStr, robotControllerId);
+		
+		if (mb.contains(StatusRCTaskFindStr)) {
+			mb=mb.substring(mb.indexOf(StatusRCTaskFindStr));
+			DecodeId rc = new DecodeId(StatusRCTaskFindStr, mb);
+			
+			if (rc.Good)
+				statusRobotTaskId = rc.result;
+			
+			return rc.Good;
+		}
+		
+		return false;
+	}
+	
 	private boolean getStatusRobotGroup() {
 		String mb = commonDataServiceImp.getRelations(ControllerRobotGroupTypeStr, controllerRobotGroupId);
 		
@@ -285,7 +320,28 @@ public class RobotControllerServer {
 		
 		StatusRcVarList.sort(new SortbyType());		
 	}
+	
+	private void getStatusRcTaskList() {
+		String mb = commonDataServiceImp.getLatest(StatusRCTaskTypeStr, statusRobotTaskId);
+		StatusRcTaskList = new ArrayList<RobotControllerTask>();
+		
+		while (mb.contains(NameFindStr)) {
+			mb = mb.substring(mb.indexOf(NameFindStr));
+			
+			String b1 = mb.substring(0, mb.indexOf("}"));
+			
+			RobotControllerTask t = new RobotControllerTask(statusRobotTaskId, b1);
+			
+			if (t.Name.length() == 0)
+				break;
+			else
+				StatusRcTaskList.add(t);
+			
+			mb = mb.substring(1);
+		}
+	}
 }
+	
 class SortbyType implements Comparator<RobotControllerVariable>
 {
     // Used for sorting in ascending order of

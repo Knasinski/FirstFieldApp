@@ -44,7 +44,9 @@ body {font-family: "Courier New"; background-color: LightBlue;}
     border: 1px solid #ccc;
     border-top: none;
 }
+
 </style>
+
 
 
 
@@ -64,18 +66,19 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 <div id="wrapper">
 
 
-<!-- Comment out the date display.
-<h1>Hello world!</h1>
-<p>The time on the server is ${serverTime}.</p>
--->
-<div id="clockData">clockData</div>
-
-<div style="text-align:center">
-    <div >
-      	<img width="450" alt="AMT Logo" src="https://zv29bqv028dj9ycg-zippykid.netdna-ssl.com/wp-content/uploads/2017/05/amt_logo_color_nav.png">
-      	<br>
-    </div>
-</div>
+	<!-- Comment out the date display.
+	<h1>Hello world!</h1>
+	<p>The time on the server is ${serverTime}.</p>
+	-->
+	
+	<table>
+	    <div><img align="left" height="125" alt="AMT Logo" src="https://zv29bqv028dj9ycg-zippykid.netdna-ssl.com/wp-content/uploads/2017/05/amt_logo_color_nav.png">
+	      	<img align="middle" height="125" alt="AMT Logo" src="https://zv29bqv028dj9ycg-zippykid.netdna-ssl.com/wp-content/uploads/2017/05/amt_logo_color_nav.png">
+	      	<img align="middle" height="125" alt="AMT Logo" src="https://zv29bqv028dj9ycg-zippykid.netdna-ssl.com/wp-content/uploads/2017/05/amt_logo_color_nav.png">
+	      	<img align="right" height="125" alt="FIELD Logo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSE5yqnK9A8D44tn6ZH9UA1qbb30kdidwbHGRb5pN2DNx-S3KR_">
+	    </div>
+	</table>
+			<h1 align="center" id="clockData">clockData</h1>
 </div>
  
  <div class="tab">
@@ -85,31 +88,11 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 </div>
 
 <!-- Tab content -->
-<div id="Controllers" class="tabcontent">
-  <!-- Add the list display of controller information -->
-	<table>
-		<thead>
-			<tr>
-				<th>controller id</th>
-				<th>controller name</th>
-				<th>controller type</th>
-				<th>Pose (Robots only)</th>
-				<!-- Add the display of controller_type -->
-			</tr>
-		</thead>
-		
-		<tbody>
-			<c:forEach items="${controllers}" var="controller">
-				<tr>
-					<td>${controller.instanceId}</td>
-					<td>${controller.name}</td>
-					<td>${controller.controllerType}</td>
-					<td>${controller.jointPose}</td>
-					<!-- Add the display of controller_type -->
-				</tr>
-			</c:forEach>
-		</tbody>
-	</table>
+<div id="Controllers" class="tabcontent">          Cartesian Position</h3>
+	<div>${Thdrs}</div>
+	<div id="r1TaskData1">r1VarData1</div>
+	<hr>
+	<div id="r2TaskData1">r1VarData1</div>
 </div> 
 
 <div id="Position Data" class="tabcontent">
@@ -136,7 +119,7 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 	<div id="r1VarData6">r1VarData6</div>
 	<div id="r1VarData7">r1VarData7</div>
 	<div id="r1VarData8">r1VarData8</div>
-	<div id="r1VarData9">r1VarData9</div>
+	<hr>
 	
 	<div id="r2VarData1">r2VarData1</div>
 	<div id="r2VarData2">r2VarData2</div>
@@ -146,7 +129,6 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 	<div id="r2VarData6">r2VarData6</div>
 	<div id="r2VarData7">r2VarData7</div>
 	<div id="r2VarData8">r2VarData8</div>
-	<div id="r2VarData9">r2VarData9</div>
 </div>
 
 
@@ -182,12 +164,20 @@ if(typeof(EventSource)!=="undefined") {
 		//write the received data to the page
 		document.getElementById("clockData").innerHTML = event.data;
 	};
+	
+	var eSource = new EventSource("RobotTaskServlet");
+	//detect message receipt
+	eSource.onmessage = function(event) {
+		var sed = event.data.split("@", 2);
+		document.getElementById("r1TaskData1").innerHTML = sed[0];
+		document.getElementById("r2TaskData1").innerHTML = sed[1];
+	};
 
-	var eSource = new EventSource("R1StatVarServlet");
+	var eSource = new EventSource("StatVarServlet");
 	//detect message receipt
 	eSource.onmessage = function(event) {
 		//Split the data received
-		var sed = event.data.split("@", 9);
+		var sed = event.data.split("@", 18);
 		
 		document.getElementById("r1VarData1").innerHTML = sed[0];
 		document.getElementById("r1VarData2").innerHTML = sed[1];
@@ -197,24 +187,14 @@ if(typeof(EventSource)!=="undefined") {
 		document.getElementById("r1VarData6").innerHTML = sed[5];
 		document.getElementById("r1VarData7").innerHTML = sed[6];
 		document.getElementById("r1VarData8").innerHTML = sed[7];
-		document.getElementById("r1VarData9").innerHTML = sed[8];
-	};
-
-	var eSource = new EventSource("R2StatVarServlet");
-	//detect message receipt
-	eSource.onmessage = function(event) {
-		//Split the data received
-		var sed = event.data.split("@", 9);
-		
-		document.getElementById("r2VarData1").innerHTML = sed[0];
-		document.getElementById("r2VarData2").innerHTML = sed[1];
-		document.getElementById("r2VarData3").innerHTML = sed[2];
-		document.getElementById("r2VarData4").innerHTML = sed[3];
-		document.getElementById("r2VarData5").innerHTML = sed[4];
-		document.getElementById("r2VarData6").innerHTML = sed[5];
-		document.getElementById("r2VarData7").innerHTML = sed[6];
-		document.getElementById("r2VarData8").innerHTML = sed[7];
-		document.getElementById("r2VarData9").innerHTML = sed[8];
+		document.getElementById("r2VarData1").innerHTML = sed[8];
+		document.getElementById("r2VarData2").innerHTML = sed[9];
+		document.getElementById("r2VarData3").innerHTML = sed[10];
+		document.getElementById("r2VarData4").innerHTML = sed[11];
+		document.getElementById("r2VarData5").innerHTML = sed[12];
+		document.getElementById("r2VarData6").innerHTML = sed[13];
+		document.getElementById("r2VarData7").innerHTML = sed[14];
+		document.getElementById("r2VarData8").innerHTML = sed[15];
 	};
 	
 	//create an object, passing it the name and location of the server side script
