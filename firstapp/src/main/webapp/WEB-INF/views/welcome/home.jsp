@@ -218,19 +218,13 @@ if(typeof(EventSource)!=="undefined") {
 	};
 	
 	//create an object, passing it the name and location of the server side script
-	var eSource = new EventSource("R1JointPoseServlet");
+	var eSource = new EventSource("JointPoseServlet");
 	//detect message receipt
 	eSource.onmessage = function(event) {
-		//write the received data to the page
-		document.getElementById("r1jaData").innerHTML = event.data;
-	};
-	
-	//create an object, passing it the name and location of the server side script
-	var eSource = new EventSource("R2JointPoseServlet");
-	//detect message receipt
-	eSource.onmessage = function(event) {
-		//write the received data to the page
-		document.getElementById("r2jaData").innerHTML = event.data;
+		var sed = event.data.split("@", 2);
+		
+		document.getElementById("r1jaData").innerHTML = sed[0];
+		document.getElementById("r2jaData").innerHTML = sed[1];
 	};
 	
 	//create an object, passing it the name and location of the server side script

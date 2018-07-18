@@ -13,16 +13,16 @@ import javax.servlet.http.HttpServletResponse;
 import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 
 /**
- * Servlet implementation class R2JointPoseServlet
+ * Servlet implementation class JointPoseServlet
  */
-@WebServlet("/R2JointPoseServlet")
-public class R2JointPoseServlet extends HttpServlet {
+@WebServlet("/JointPoseServlet")
+public class JointPoseServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public R2JointPoseServlet() {
+    public JointPoseServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -39,9 +39,11 @@ public class R2JointPoseServlet extends HttpServlet {
 
 		while (!stopme) {
 			ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
-			String n = r.get(1).controllerName;
-			String p = r.get(1).getRobotJas();
-			String s = String.format("%-10s%s", n, p);
+			String n = r.get(0).controllerName;
+			String p = r.get(0).getRobotJas();
+			String n2 = r.get(1).controllerName;
+			String p2 = r.get(1).getRobotJas();
+			String s = String.format("%-10s%s@%-10s%s", n, p, n2, p2);
 
 			writer.write("data: "+ s +"\n\n");
 			writer.flush();
