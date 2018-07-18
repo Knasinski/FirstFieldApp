@@ -113,12 +113,14 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 </div> 
 
 <div id="Position Data" class="tabcontent">
-	<h3>                                Joint Position                                                      Joint Odometer</h3>	
+	<h3>                        Joint Position                                                              Joint Odometer</h3>	
 	<div>${Jhdrs}</div>
 	<div id="r1jaData">r1jaData</div>
 	<div id="r2jaData">r2jaData</div>
 	<hr>
 	
+	<h3>                        Cartesian Position</h3>
+	<div>${Chdrs}</div>
 	<div id="r1CartData">r1CartData</div>
 	<div id="r2CartData">r2CartData</div>
 

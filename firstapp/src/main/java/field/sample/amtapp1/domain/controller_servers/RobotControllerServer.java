@@ -6,6 +6,7 @@ import java.util.Comparator;
 import field.sample.amtapp1.domain.controller_variables.RobotControllerVariable;
 import field.sample.amtapp1.domain.model.CommonDataLink;
 import field.sample.amtapp1.domain.service.CommonDataService;
+import field.sample.amtapp1.utility_programs.DecodeConfig;
 import field.sample.amtapp1.utility_programs.DecodeId;
 import field.sample.amtapp1.utility_programs.DecodeName;
 
@@ -19,6 +20,7 @@ public class RobotControllerServer {
 	private String ControllerRobotGroupFindStr = "\"controller_robot_group\":";
 	private String StatusRobotGroupFindStr = "\"status_robot_group\":";
 	private String StatusRCVarFindStr = "\"id\":\"status_robot_controller_variable";
+	private String RobotConfigFindStr = "\"configuration\":";
 
 	public String controllerId = "";
 	public String controllerName = "";
@@ -40,6 +42,7 @@ public class RobotControllerServer {
 	
 	
 	public double[] CartesianPosition = {0,0,0,0,0,0,0,0,0};
+	public String Configuration = "";
 
 	ArrayList<String> StatusRcVars = new ArrayList<String>();
 	ArrayList<RobotControllerVariable> StatusRcVarList = new ArrayList<RobotControllerVariable>();
@@ -152,7 +155,7 @@ public class RobotControllerServer {
 				mb += t;
 			}
 			
-			rc = mb;
+			rc = mb + Configuration;
 			} catch (Exception e) { }
 		}
 		
@@ -164,14 +167,24 @@ public class RobotControllerServer {
 	
 	try {
 		if ((mb != null) && (mb.length() != 0) && mb.contains("cartesian_position") && !mb.contains("\"cartesian_position\":null")) {
-			mb = mb.substring(mb.indexOf("cartesian_position"));
-			String rc = mb.substring(mb.indexOf("value")+8);
+			String rc = mb.substring(mb.indexOf("cartesian_position"));
+			rc = rc.substring(rc.indexOf("value")+8);
 			rc = rc.substring(0,rc.indexOf("]"));
 			
 			String[] items = rc.split(",");
 			
-			for (int i=0; i<6; ++i) {
+			for (int i=0; i<6; ++i) 
 				CartesianPosition[i] = Double.parseDouble(items[i]);
+			
+			//Process config
+			Configuration = "Invalid";
+			
+			if (mb.contains(RobotConfigFindStr)) {
+				rc = mb.substring(mb.indexOf(RobotConfigFindStr));
+				DecodeConfig c = new DecodeConfig(rc);
+				
+				if (c.Good)
+					Configuration = c.result;
 			}
 		}
 		} catch (Exception e) {
