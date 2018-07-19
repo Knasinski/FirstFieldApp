@@ -1,5 +1,16 @@
 package field.sample.amtapp1.domain.controller_servers;
 
+//Test
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Iterator;
+
+import com.google.gson.Gson;
+
+//import org.json;
+//end Test
+
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -59,6 +70,10 @@ public class RobotControllerServer {
 	private CommonDataService commonDataServiceImp;
 	
 	public RobotControllerServer(String cid, CommonDataService cdsi) {
+		
+		//Start tests
+//		JSONParser jsonParser = new JSONParser();
+		//End tests
 		controllerId = cid;
 		
 		commonDataServiceImp = cdsi;
@@ -201,6 +216,8 @@ public class RobotControllerServer {
 			if (mb.contains(RobotConfigFindStr)) {
 				rc = mb.substring(mb.indexOf(RobotConfigFindStr));
 				DecodeConfig c = new DecodeConfig(rc);
+				
+//				void d = JSON.Parse();
 				
 				if (c.Good)
 					Configuration = c.result;
