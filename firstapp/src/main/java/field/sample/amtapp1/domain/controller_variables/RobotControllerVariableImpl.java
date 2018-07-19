@@ -2,7 +2,7 @@ package field.sample.amtapp1.domain.controller_variables;
 
 import field.sample.amtapp1.domain.service.CommonDataService;
 
-public class RobotControllerVariable {
+public class RobotControllerVariableImpl {
 	private String TypeRecognize =  "\"type\":";
 	private String NameRecognize =  "\"name\":";
 	private String UnitRecognize =  "\"unit\":";
@@ -17,7 +17,7 @@ public class RobotControllerVariable {
 	public boolean Good = false;
 	private String StatusRCVarTypeStr = "status_robot_controller_variable";
 	
-	public RobotControllerVariable(String Id, String Type, String Name, String Unit, String Value) {
+	public RobotControllerVariableImpl(String Id, String Type, String Name, String Unit, String Value) {
 		this.Id = Id;
 		this.Type = Type;
 		this.Name = Name;
@@ -26,7 +26,7 @@ public class RobotControllerVariable {
 		Good = true;
 	};
 	
-	public RobotControllerVariable(String Id, String JsonObj) {
+	public RobotControllerVariableImpl(String Id, String JsonObj) {
 		if (JsonObj.contains(TypeRecognize) && JsonObj.contains(TypeRecognize) && JsonObj.contains(TypeRecognize)) {
 			this.Id = Id;
 			this.Type =  decoder(TypeRecognize, JsonObj);
@@ -52,9 +52,9 @@ public class RobotControllerVariable {
 		this.Value = convertValueString(mb);
 	}
 	
-	public static int Compare(RobotControllerVariable a, RobotControllerVariable b) {
-		RobotControllerVariable A = a;
-		RobotControllerVariable B = b;
+	public static int Compare(RobotControllerVariableImpl a, RobotControllerVariableImpl b) {
+		RobotControllerVariableImpl A = a;
+		RobotControllerVariableImpl B = b;
 		
 		return A.Type.compareTo(B.Type);
 	}

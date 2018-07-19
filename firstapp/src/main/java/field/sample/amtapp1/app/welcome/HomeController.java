@@ -59,13 +59,15 @@ public String home(Locale locale, Model model) throws InterruptedException {
 		
 		model.addAttribute("controllers", controllers);
 		
-		
-		for(field.sample.amtapp1.domain.model.Controller controller:controllers) {		
-			if("robot_controller".equals(controller.getControllerType())) {
-				// Acquire the instance/history/relations of CNC.
-				controllerServiceImpl.queryCncData(controller.getInstanceId());
-				}
-		}
+//		
+//		for(field.sample.amtapp1.domain.model.Controller controller:controllers) {		
+//			String d = controller.getControllerType();
+//			if("robot_controller".equals(controller.getControllerType())) {
+//				
+//				// Acquire the instance/history/relations of CNC.
+//				controllerServiceImpl.queryCncData(controller.getInstanceId());
+//				}
+//		}
 		
 		FirstInit = false;
 	}

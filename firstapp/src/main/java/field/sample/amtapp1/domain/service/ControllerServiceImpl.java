@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
+import field.sample.amtapp1.domain.controller_servers.GenericRelationsData;
 import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 import field.sample.amtapp1.domain.model.CommonDataController;
 import field.sample.amtapp1.domain.model.CommonDataControllerCnc;
@@ -51,6 +52,7 @@ public class ControllerServiceImpl implements ControllerService {
 		Integer i=1;
 		//CommonDataController
 		for(CommonDataController controller:controllers) {
+			
 			controller.controller_type = getControllerType(controller);
 			
 			if ("controller_robot_controller".equals(controller.controller_type)) {
@@ -67,7 +69,7 @@ public class ControllerServiceImpl implements ControllerService {
 					}
 				}
 				
-				list.add(new Controller(controller.id, controller.name, controller.controller_type, getRobotPoseString("status_robot_group00001")));
+				list.add(new Controller(controller.id, controller.name, controller.controller_type));
 			}
 		}
 		
@@ -87,8 +89,6 @@ public class ControllerServiceImpl implements ControllerService {
 	logger.debug("id : " + controller.id);
 	logger.debug("name : " + controller.name);
 	logger.debug("type : " + controller.controller_type);
-	logger.debug("ip : " + controller.ip_address);
-	logger.debug("manu : " + controller.manufacturer);
 	
 	if(controller.link != null) {
 		logger.debug("link.history : " + controller.link.history);
@@ -150,6 +150,7 @@ public class ControllerServiceImpl implements ControllerService {
 	private String getControllerType(CommonDataController controller) {
 		String ct = "Unknown";
 		
+		
 		if (controller.controller_type.equals(ct) || (controller.controller_type.length() == 0)) {
 			String mb = commonDataServiceImpl.getRelations("controller", controller.id);
 			
@@ -173,43 +174,6 @@ public class ControllerServiceImpl implements ControllerService {
 		
 		return ct;
 	}
-	
-	
-	private String getRobotPoseString(String statusGroupId)
-	{
-		String rc = "Invalid";
-		String mb = commonDataServiceImpl.getLatest("status_robot_group", statusGroupId);
-		
-		if ((mb != null) && (mb.length() != 0) && mb.contains("joint_position") && !mb.contains("\"joint_position\":null")) {
-			rc = mb.substring(mb.indexOf("value")+8);
-			rc = rc.substring(0,rc.indexOf("]"));
-			
-			String[] items = rc.split(",");
-			
-			mb = "";
-			Boolean first = true;
-			
-			
-			for (String s : items) {
-				double v = Double.parseDouble(s);
-				
-				if (first) {
-					first=false;
-					String t = String.format("%.2f", v);
-					mb += t;
-					meaningless=v;
-				}
-				else {
-					String t = String.format(", %.2f", v);
-					mb +=  t;
-				}				
-			}
-			
-			rc = mb;
-		}
-		return rc;
-	}
-	
 	
 }
 	

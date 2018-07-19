@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
-import field.sample.amtapp1.domain.controller_variables.RobotControllerVariable;
+import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.model.CommonDataLink;
 import field.sample.amtapp1.domain.service.CommonDataService;
 import field.sample.amtapp1.utility_programs.DecodeConfig;
@@ -61,7 +61,9 @@ public class RobotControllerServer {
 	public String Configuration = "";
 
 	ArrayList<String> StatusRcVars = new ArrayList<String>();
-	ArrayList<RobotControllerVariable> StatusRcVarList = new ArrayList<RobotControllerVariable>();
+	
+	ArrayList<RcVariable> StatusRcVarLst = new ArrayList<RcVariable>();
+	
 	ArrayList<RobotControllerTask> StatusRcTaskList = new ArrayList<RobotControllerTask>();
 	
 	public boolean DataGood;
@@ -87,7 +89,6 @@ public class RobotControllerServer {
 				getStatusRobotGroup() &&
 				getStatusRcVariables() &&
 				getStatusRobotTaskId()) {
-				getStatusRcVarList();
 				DataGood = true;
 			}
 	}
@@ -108,10 +109,12 @@ public class RobotControllerServer {
 		String mb = "";
 		
 		for (int i=0; i<StatusRcVars.size(); ++i) {
-			RobotControllerVariable rcv = StatusRcVarList.get(i);
-			rcv.UpDateValue(commonDataServiceImp);
+			getStatusRcVarLst();
+			RcVariable rcv = StatusRcVarLst.get(i);
 			
-			mb += String.format("%-20s%-20s%-20s%-20s%-20s@\0", controllerName, rcv.Type, rcv.Name, rcv.Unit, rcv.Value);
+			String Uu = (rcv.unit == null) ? "" : rcv.unit;
+			
+			mb += String.format("%-20s%-20s%-20s%-20s%-20s@\0", controllerName, rcv.type, rcv.name, Uu, rcv.getValueUse());
 		}
 		
 		return mb;
@@ -322,20 +325,19 @@ public class RobotControllerServer {
 		return true;
 	}
 	
-	private RobotControllerVariable getStatusRcVariable(String varID) {
+	private RcVariable getStatusRcVariable(String varID) {
 		String mb = commonDataServiceImp.getLatest(StatusRCVarTypeStr, varID);
 		
-		return new RobotControllerVariable(varID, mb);
+		return new Gson().fromJson(mb, RcVariable.class);
 	}
 	
-	private void getStatusRcVarList() {
-		StatusRcVarList = new ArrayList<RobotControllerVariable>();
+	private void getStatusRcVarLst() {
+		StatusRcVarLst = new ArrayList<RcVariable>();
 		
-		for (int i=0; i<StatusRcVars.size(); ++i) {
-			StatusRcVarList.add(getStatusRcVariable(StatusRcVars.get(i)));
-		}
+		for (int i=0; i<StatusRcVars.size(); ++i)
+			StatusRcVarLst.add(getStatusRcVariable(StatusRcVars.get(i)));
 		
-		StatusRcVarList.sort(new SortbyType());		
+		StatusRcVarLst.sort(new SortbyType());		
 	}
 	
 	private void getStatusRcTaskList() {
@@ -359,12 +361,12 @@ public class RobotControllerServer {
 	}
 }
 	
-class SortbyType implements Comparator<RobotControllerVariable>
+class SortbyType implements Comparator<RcVariable>
 {
     // Used for sorting in ascending order of
     // roll number
-    public int compare(RobotControllerVariable a, RobotControllerVariable b)
+    public int compare(RcVariable a, RcVariable b)
     {
-    	return a.Type.compareTo(b.Type);
+    	return a.type.compareTo(b.type);
     }
 }
