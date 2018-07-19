@@ -150,6 +150,10 @@ public class ControllerServiceImpl implements ControllerService {
 	private String getControllerType(CommonDataController controller) {
 		String ct = "Unknown";
 		
+		Controller c = new Controller();
+		
+		String xxx = controller.controller_type
+		
 		if (controller.controller_type.equals(ct) || (controller.controller_type.length() == 0)) {
 			String mb = commonDataServiceImpl.getRelations("controller", controller.id);
 			

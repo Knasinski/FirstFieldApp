@@ -217,7 +217,6 @@ public class RobotControllerServer {
 				rc = mb.substring(mb.indexOf(RobotConfigFindStr));
 				DecodeConfig c = new DecodeConfig(rc);
 				
-//				void d = JSON.Parse();
 				
 				if (c.Good)
 					Configuration = c.result;
