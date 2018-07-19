@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
+import field.sample.amtapp1.domain.controller_variables.RcStatusRobotGroup;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
+import field.sample.amtapp1.domain.model.CommonDataController;
 import field.sample.amtapp1.domain.model.CommonDataLink;
 import field.sample.amtapp1.domain.service.CommonDataService;
 import field.sample.amtapp1.utility_programs.DecodeConfig;
@@ -48,11 +50,12 @@ public class RobotControllerServer {
 	public String jointPose = "";
 	public CommonDataLink link = new CommonDataLink();
 	
+	public RcStatusRobotGroup LatestRcStatusRobotGroup;
+	
 	public int NumExternalAxis = 0;
 	
 	public int Count = 0;
 	
-	public double[] JointPosition = {0,0,0,0,0,0,0,0,0};
 	public double[] LastJointPosition = {0,0,0,0,0,0,0,0,0};
 	public double[] JointOdometer = {0,0,0,0,0,0,0,0,0};
 	
@@ -125,59 +128,42 @@ public class RobotControllerServer {
 		String rc = "Invalid";
 		String mb = "";
 		
-		if (getCurrentJas()) {
-			try {
-			for (int i=0; i<6; ++i) {
-				String t = String.format("%-9.3f\0", JointPosition[i]);
-				mb += t;
+		LatestRcStatusRobotGroup = getLatestStatusRobotGroup();
+		
+		if (JrecStarted ) {
+			for (int i=0; i<LatestRcStatusRobotGroup.joint_position.value.length; ++i) {
+				double dj = Math.abs(LastJointPosition[i] - LatestRcStatusRobotGroup.joint_position.value[i]);
+				JointOdometer[i] += dj;
 			}
-			
-			String xxx = String.format("%-55s |  ", mb);
-			
-			mb = xxx;
-			
-			for (int i=0; i<6; ++i) {
-				String t = String.format("%-15.3f\0", JointOdometer[i]);
-				mb += t;
-			}
-			
-			rc = mb;
-			} catch (Exception e) { }
 		}
+		else
+			JrecStarted = true;
+		
+		for (int i=0; i<LatestRcStatusRobotGroup.joint_position.value.length; ++i) {
+			LastJointPosition[i] = LatestRcStatusRobotGroup.joint_position.value[i];
+			
+			String t = String.format("%-9.3f\0", LatestRcStatusRobotGroup.joint_position.value[i]);
+			mb += t;
+		}
+			
+		String xxx = String.format("%-55s |  ", mb);
+		
+		mb = xxx;
+		
+		for (int i=0; i<6; ++i) {
+			String t = String.format("%-15.3f\0", JointOdometer[i]);
+			mb += t;
+		}
+		
+		rc = mb;
 		
 		return rc;
 	}
 	
-	private boolean getCurrentJas() {
+	private RcStatusRobotGroup getLatestStatusRobotGroup() {
 		String mb = commonDataServiceImp.getLatest("status_robot_group", statusRobotGroupId);
 		
-		try {
-			if ((mb != null) && (mb.length() != 0) && mb.contains("joint_position") && !mb.contains("\"joint_position\":null")) {
-				String rc = mb.substring(mb.indexOf("value")+8);
-				rc = rc.substring(0,rc.indexOf("]"));
-				
-				String[] items = rc.split(",");
-				
-				for (int i=0; i<items.length; ++i) {
-					JointPosition[i] = Double.parseDouble(items[i]);
-				}
-			}
-		} catch (Exception e) {
-			return false;
-		}
-		
-		//Calculate change in position
-		if (JrecStarted) {
-			for (int i=0; i<6; ++i) 
-				JointOdometer[i] += Math.abs(JointPosition[i] - LastJointPosition[i]);
-		}
-		else 
-			JrecStarted = true;
-		
-	for (int i=0; i<6; ++i)
-		LastJointPosition[i] = JointPosition[i];
-		
-	return true;
+		return new Gson().fromJson(mb, RcStatusRobotGroup.class);
 	}
 	
 	public String getRobotCartPos()
@@ -185,16 +171,15 @@ public class RobotControllerServer {
 		String rc = "Invalid";
 		String mb = "";
 		
-		if (getCurrentCartPos()) {
-			try {
-			for (int i=0; i<6; ++i) {
-				String t = String.format("%-9.3f\0", CartesianPosition[i]);
-				mb += t;
-			}
-			
-			rc = mb + Configuration;
-			} catch (Exception e) { }
+		
+		for (int i=0; i<6; ++i) {
+			String t = String.format("%-9.3f\0", LatestRcStatusRobotGroup.cartesian_position.value[i]);
+			mb += t;
 		}
+			
+		rc =  String.format("%s%-10s%-5d%-5d%-5d%-5d", mb, LatestRcStatusRobotGroup.cartesian_position.configuration,
+				LatestRcStatusRobotGroup.tool_frame_id, LatestRcStatusRobotGroup.user_frame_id,
+				LatestRcStatusRobotGroup.is_running, LatestRcStatusRobotGroup.is_servo_ready); 
 		
 		return rc;
 	}
