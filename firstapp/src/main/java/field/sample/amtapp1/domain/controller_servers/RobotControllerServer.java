@@ -130,6 +130,7 @@ public class RobotControllerServer {
 		
 		LatestRcStatusRobotGroup = getLatestStatusRobotGroup();
 		
+		
 		if (JrecStarted ) {
 			for (int i=0; i<LatestRcStatusRobotGroup.joint_position.value.length; ++i) {
 				double dj = Math.abs(LastJointPosition[i] - LatestRcStatusRobotGroup.joint_position.value[i]);
@@ -171,15 +172,24 @@ public class RobotControllerServer {
 		String rc = "Invalid";
 		String mb = "";
 		
+		if (LatestRcStatusRobotGroup == null)
+			LatestRcStatusRobotGroup = getLatestStatusRobotGroup();
 		
-		for (int i=0; i<6; ++i) {
-			String t = String.format("%-9.3f\0", LatestRcStatusRobotGroup.cartesian_position.value[i]);
-			mb += t;
+		RcStatusRobotGroup db = LatestRcStatusRobotGroup;
+		
+		if (LatestRcStatusRobotGroup.cartesian_position.value.length > 5) {
+			for (int i=0; i<6; ++i) {
+				String t = String.format("%-9.3f\0", LatestRcStatusRobotGroup.cartesian_position.value[i]);
+				mb += t;
+			}
+				
+			rc =  String.format("%s%-10s%-5d%-5d%-5d%-5d", mb, LatestRcStatusRobotGroup.cartesian_position.configuration,
+					LatestRcStatusRobotGroup.tool_frame_id, LatestRcStatusRobotGroup.user_frame_id,
+					LatestRcStatusRobotGroup.is_running, LatestRcStatusRobotGroup.is_servo_ready); 
 		}
-			
-		rc =  String.format("%s%-10s%-5d%-5d%-5d%-5d", mb, LatestRcStatusRobotGroup.cartesian_position.configuration,
-				LatestRcStatusRobotGroup.tool_frame_id, LatestRcStatusRobotGroup.user_frame_id,
-				LatestRcStatusRobotGroup.is_running, LatestRcStatusRobotGroup.is_servo_ready); 
+		else {
+			rc = "ZIPPO";
+		}
 		
 		return rc;
 	}
@@ -327,21 +337,24 @@ public class RobotControllerServer {
 	
 	private void getStatusRcTaskList() {
 		String mb = commonDataServiceImp.getLatest(StatusRCTaskTypeStr, statusRobotTaskId);
-		StatusRcTaskList = new ArrayList<RobotControllerTask>();
 		
-		while (mb.contains(NameFindStr)) {
-			mb = mb.substring(mb.indexOf(NameFindStr));
+		if (mb.length() != 0) {
+			StatusRcTaskList = new ArrayList<RobotControllerTask>();
 			
-			String b1 = mb.substring(0, mb.indexOf("}"));
-			
-			RobotControllerTask t = new RobotControllerTask(statusRobotTaskId, b1);
-			
-			if (t.Name.length() == 0)
-				break;
-			else
-				StatusRcTaskList.add(t);
-			
-			mb = mb.substring(1);
+			while (mb.contains(NameFindStr)) {
+				mb = mb.substring(mb.indexOf(NameFindStr));
+				
+				String b1 = mb.substring(0, mb.indexOf("}"));
+				
+				RobotControllerTask t = new RobotControllerTask(statusRobotTaskId, b1);
+				
+				if (t.Name.length() == 0)
+					break;
+				else
+					StatusRcTaskList.add(t);
+				
+				mb = mb.substring(1);
+			}
 		}
 	}
 }
