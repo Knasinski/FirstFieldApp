@@ -38,6 +38,7 @@ public String home(Locale locale, Model model) throws InterruptedException {
 	logger.info("Welcome home! The client locale is {}.", locale);
 	Glocale = locale;
 	
+	
 	if (FirstInit) {
 		
 		String JointHeader = String.format("%-10s%-9s%-9s%-9s%-9s%-9s%-9s%4s%-15s%-15s%-15s%-15s%-15s%-15s", 
@@ -72,7 +73,7 @@ public String home(Locale locale, Model model) throws InterruptedException {
 		FirstInit = false;
 	}
 	
-	
+
 	return "welcome/home";
 	}
 
