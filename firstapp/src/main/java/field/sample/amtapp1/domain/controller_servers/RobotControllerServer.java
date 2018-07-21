@@ -68,6 +68,8 @@ public class RobotControllerServer {
 	
 	ArrayList<RcVariable> StatusRcVarLst = new ArrayList<RcVariable>();
 	
+	String StatusRcVarsJson = "";
+	
 	ArrayList<RobotControllerTask> StatusRcTaskList = new ArrayList<RobotControllerTask>();
 	
 	public boolean DataGood;
@@ -122,6 +124,11 @@ public class RobotControllerServer {
 		}
 		
 		return mb;
+	}
+	
+	public String GetStatusRobotVarsJson() {
+		getStatusRcVarLst();
+		return StatusRcVarsJson;
 	}
 	
 	public String getRobotStatusGroupJson() {
@@ -333,11 +340,14 @@ public class RobotControllerServer {
 	
 	private void getStatusRcVarLst() {
 		StatusRcVarLst = new ArrayList<RcVariable>();
+		StatusRcVarsJson = "[\n";
+				
+		for (int i=0; i<StatusRcVars.size(); ++i) {
+			String mb = commonDataServiceImp.getLatest(StatusRCVarTypeStr, StatusRcVars.get(i)).replace("\n", "");
+			StatusRcVarsJson += (i == (StatusRcVars.size()-1) ? (mb + "]\n") : (mb + ",\n"));
+		}
 		
-		for (int i=0; i<StatusRcVars.size(); ++i)
-			StatusRcVarLst.add(getStatusRcVariable(StatusRcVars.get(i)));
-		
-		StatusRcVarLst.sort(new SortbyType());		
+		//StatusRcVarLst.sort(new SortbyType());		
 	}
 	
 	private void getStatusRcTaskList() {

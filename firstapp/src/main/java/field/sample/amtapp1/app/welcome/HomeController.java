@@ -82,10 +82,37 @@ public String getR2PositionUrl(Locale locale, Model model) throws InterruptedExc
 	return getRobotPositionUrl(0);
 	}
 
+@RequestMapping(value = "/r1variables")
+public String getR1Variables(Locale locale, Model model) throws InterruptedException {
+
+	Glocale = locale;
+	Gmodel = model;
+
+    checkInit();    
+
+	return getRobotVariables(0);
+	}
+@RequestMapping(value = "/r2variables")
+public String getR2Variables(Locale locale, Model model) throws InterruptedException {
+
+	Glocale = locale;
+	Gmodel = model;
+
+    checkInit();    
+
+	return getRobotVariables(1);
+	}
+
 private String getRobotPositionUrl(int robotNumber) {
 	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
 	
 	return r.get(robotNumber).getRobotStatusGroupJson();
+}
+
+private String getRobotVariables(int robotNumber) {
+	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
+
+	return r.get(robotNumber).GetStatusRobotVarsJson();
 }
 
 	private void checkInit() {
