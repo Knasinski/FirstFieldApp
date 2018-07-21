@@ -30,6 +30,7 @@ public class RobotControllerServer {
 	private String ControllerRobotGroupTypeStr = "controller_robot_group";
 	private String StatusRCVarTypeStr = "status_robot_controller_variable";
 	private String StatusRCTaskTypeStr = "status_robot_controller_task";
+	private String StatusRobotGroupTypeStr = "status_robot_group";
 	
 	
 	private String ControllerRobotGroupFindStr = "\"controller_robot_group\":";
@@ -123,6 +124,10 @@ public class RobotControllerServer {
 		return mb;
 	}
 	
+	public String getRobotStatusGroupJson() {
+		return commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, statusRobotGroupId);
+	}
+	
 	public String getRobotJas()
 	{
 		String rc = "Invalid";
@@ -162,7 +167,7 @@ public class RobotControllerServer {
 	}
 	
 	private RcStatusRobotGroup getLatestStatusRobotGroup() {
-		String mb = commonDataServiceImp.getLatest("status_robot_group", statusRobotGroupId);
+		String mb = commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, statusRobotGroupId);
 		
 		return new Gson().fromJson(mb, RcStatusRobotGroup.class);
 	}
@@ -195,7 +200,7 @@ public class RobotControllerServer {
 	}
 	
 	private boolean getCurrentCartPos() {
-		String mb = commonDataServiceImp.getLatest("status_robot_group", statusRobotGroupId);
+		String mb = commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, statusRobotGroupId);
 	
 	try {
 		if ((mb != null) && (mb.length() != 0) && mb.contains("cartesian_position") && !mb.contains("\"cartesian_position\":null")) {

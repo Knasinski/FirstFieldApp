@@ -1,4 +1,4 @@
-package servers;
+package field.sample.amtapp1.app.welcome;
 
 public class Greeting {
 
