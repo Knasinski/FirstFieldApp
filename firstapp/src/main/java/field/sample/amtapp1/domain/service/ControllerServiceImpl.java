@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
-import field.sample.amtapp1.domain.controller_servers.GenericRelationsData;
 import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 import field.sample.amtapp1.domain.model.CommonDataController;
 import field.sample.amtapp1.domain.model.CommonDataControllerCnc;

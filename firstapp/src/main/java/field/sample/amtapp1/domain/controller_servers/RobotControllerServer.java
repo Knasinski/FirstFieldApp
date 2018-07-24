@@ -1,10 +1,5 @@
 package field.sample.amtapp1.domain.controller_servers;
 
-//Test
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Iterator;
 
 import com.google.gson.Gson;
 
@@ -12,17 +7,18 @@ import com.google.gson.Gson;
 //end Test
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
 import field.sample.amtapp1.domain.controller_variables.RcStatusRobotGroup;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
-import field.sample.amtapp1.domain.model.CommonDataController;
 import field.sample.amtapp1.domain.model.CommonDataLink;
 import field.sample.amtapp1.domain.service.CommonDataService;
-import field.sample.amtapp1.utility_programs.DecodeConfig;
 import field.sample.amtapp1.utility_programs.DecodeId;
 import field.sample.amtapp1.utility_programs.DecodeName;
+
+
 
 public class RobotControllerServer {
 	
@@ -36,7 +32,6 @@ public class RobotControllerServer {
 	private String ControllerRobotGroupFindStr = "\"controller_robot_group\":";
 	private String StatusRobotGroupFindStr = "\"status_robot_group\":";
 	private String StatusRCVarFindStr = "\"id\":\"status_robot_controller_variable";
-	private String RobotConfigFindStr = "\"configuration\":";
 	private String StatusRCTaskFindStr = "\"id\":\"status_robot_controller_task";
 	private String NameFindStr = "\"name\":";
 
@@ -68,7 +63,7 @@ public class RobotControllerServer {
 	
 	ArrayList<RcVariable> StatusRcVarLst = new ArrayList<RcVariable>();
 	
-	String StatusRcVarsJson = "";
+//	String StatusRcVarsJson = "";
 	
 	ArrayList<RobotControllerTask> StatusRcTaskList = new ArrayList<RobotControllerTask>();
 	
@@ -99,21 +94,14 @@ public class RobotControllerServer {
 			}
 	}
 	
-	public String getStatusRobotTasks() {
-		String mb = String.format("%-10s", controllerName);
+	public ArrayList<RobotControllerTask> getStatusRobotTasks() {
 		getStatusRcTaskList();
 		
-		for (int i=0; i<StatusRcTaskList.size(); ++i) {
-			RobotControllerTask t = StatusRcTaskList.get(i);
-			
-			mb += String.format("%-10s%-10s%-10s%-10s", t.Name, t.ProgramName, t.Status, t.LineNumber);
-		}
-		
-		return mb;
+		return StatusRcTaskList;
 	}
 	public String getStatusRobotVars() {
 		String mb = "";
-		
+				
 		for (int i=0; i<StatusRcVars.size(); ++i) {
 			getStatusRcVarLst();
 			RcVariable rcv = StatusRcVarLst.get(i);
@@ -126,13 +114,26 @@ public class RobotControllerServer {
 		return mb;
 	}
 	
-	public String GetStatusRobotVarsJson() {
+	public RcVariable[] GetStatusRobotVarsJson() {
 		getStatusRcVarLst();
-		return StatusRcVarsJson;
+		RcVariable[] v = new RcVariable[StatusRcVarLst.size()];
+		
+		for (int i=0; i<StatusRcVarLst.size(); ++i)
+			v[i] = StatusRcVarLst.get(i);
+		
+		return v;
 	}
 	
-	public String getRobotStatusGroupJson() {
-		return commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, statusRobotGroupId);
+	public RcStatusRobotGroup getRobotStatusGroupJson() {
+
+		LatestRcStatusRobotGroup = getLatestStatusRobotGroup();
+		
+	    return LatestRcStatusRobotGroup;
+	}
+	
+	public String getRobotTasksJson() {
+		getStatusRcTaskList();
+		return commonDataServiceImp.getLatest(StatusRCTaskTypeStr, statusRobotTaskId);
 	}
 	
 	public String getRobotJas()
@@ -187,8 +188,6 @@ public class RobotControllerServer {
 		if (LatestRcStatusRobotGroup == null)
 			LatestRcStatusRobotGroup = getLatestStatusRobotGroup();
 		
-		RcStatusRobotGroup db = LatestRcStatusRobotGroup;
-		
 		if (LatestRcStatusRobotGroup.cartesian_position.value.length > 5) {
 			for (int i=0; i<6; ++i) {
 				String t = String.format("%-9.3f\0", LatestRcStatusRobotGroup.cartesian_position.value[i]);
@@ -204,40 +203,6 @@ public class RobotControllerServer {
 		}
 		
 		return rc;
-	}
-	
-	private boolean getCurrentCartPos() {
-		String mb = commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, statusRobotGroupId);
-	
-	try {
-		if ((mb != null) && (mb.length() != 0) && mb.contains("cartesian_position") && !mb.contains("\"cartesian_position\":null")) {
-			String rc = mb.substring(mb.indexOf("cartesian_position"));
-			rc = rc.substring(rc.indexOf("value")+8);
-			rc = rc.substring(0,rc.indexOf("]"));
-			
-			String[] items = rc.split(",");
-			
-			for (int i=0; i<6; ++i) 
-				CartesianPosition[i] = Double.parseDouble(items[i]);
-			
-			//Process config
-			Configuration = "Invalid";
-			
-			if (mb.contains(RobotConfigFindStr)) {
-				rc = mb.substring(mb.indexOf(RobotConfigFindStr));
-				DecodeConfig c = new DecodeConfig(rc);
-				
-//				void d = JSON.Parse();
-				
-				if (c.Good)
-					Configuration = c.result;
-			}
-		}
-		} catch (Exception e) {
-			return false;
-		}
-	
-	return true;		
 	}
 	
 	private boolean getControllerName() {
@@ -332,22 +297,15 @@ public class RobotControllerServer {
 		return true;
 	}
 	
-	private RcVariable getStatusRcVariable(String varID) {
-		String mb = commonDataServiceImp.getLatest(StatusRCVarTypeStr, varID);
-		
-		return new Gson().fromJson(mb, RcVariable.class);
-	}
-	
 	private void getStatusRcVarLst() {
 		StatusRcVarLst = new ArrayList<RcVariable>();
-		StatusRcVarsJson = "[\n";
 				
 		for (int i=0; i<StatusRcVars.size(); ++i) {
 			String mb = commonDataServiceImp.getLatest(StatusRCVarTypeStr, StatusRcVars.get(i)).replace("\n", "");
-			StatusRcVarsJson += (i == (StatusRcVars.size()-1) ? (mb + "]\n") : (mb + ",\n"));
-		}
+			StatusRcVarLst.add(new Gson().fromJson(mb, RcVariable.class));
+		}	
 		
-		//StatusRcVarLst.sort(new SortbyType());		
+		Collections.sort(StatusRcVarLst, new SortByType());
 	}
 	
 	private void getStatusRcTaskList() {
@@ -373,8 +331,8 @@ public class RobotControllerServer {
 		}
 	}
 }
-	
-class SortbyType implements Comparator<RcVariable>
+
+class SortByType implements Comparator<RcVariable>
 {
     // Used for sorting in ascending order of
     // roll number

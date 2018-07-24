@@ -3,28 +3,36 @@ package field.sample.amtapp1.app.welcome;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestMethod;
 
 import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
+import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
+import field.sample.amtapp1.domain.controller_variables.RcStatusRobotGroup;
+import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.service.ControllerService;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 
 /**
 * Handles requests for the application home page.
 * 
 */
+
+
+@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 public class HomeController {
 private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
@@ -34,6 +42,21 @@ public static Model Gmodel;
 private static boolean FirstInit = true;
 
 private static boolean UsingMyHtml = false;
+
+@Bean
+
+public WebMvcConfigurer corsConfigurer() { return new WebMvcConfigurerAdapter() {
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:8080")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
+                .allowedHeaders("header1", "header2") //What is this for?
+                .allowCredentials(true);
+    	}
+	};
+}
+
 
 @Autowired
 private ControllerService controllerServiceImpl;
@@ -50,17 +73,16 @@ public Greeting home(Locale locale, Model model) throws InterruptedException {
 	
 	logger.info("Welcome home! The client locale is {}.", locale);
     final String template = "Hello, %s!";
-    final AtomicLong xcounter = new AtomicLong();	
     
-    checkInit();	
+    checkInit();
 
-	return new Greeting(xcounter.incrementAndGet(),
-            String.format(template, "Howdy"));
+	return new Greeting(String.format(template, "Howdy"));
 	}
 
 
 @RequestMapping(value = "/r1position")
-public String getR1PositionUrl(Locale locale, Model model) throws InterruptedException {
+@ResponseBody
+public Object RcStatusRobotGroup(Locale locale, Model model) throws InterruptedException {
 
 	Glocale = locale;
 	Gmodel = model;
@@ -68,10 +90,13 @@ public String getR1PositionUrl(Locale locale, Model model) throws InterruptedExc
     checkInit();    
 
 
-	return getRobotPositionUrl(0);
+    return getRobotPositionUrl(0);
 	}
+
 @RequestMapping(value = "/r2position")
-public String getR2PositionUrl(Locale locale, Model model) throws InterruptedException {
+
+@ResponseBody
+public RcStatusRobotGroup getR2PositionUrl(Locale locale, Model model) throws InterruptedException {
 
 	Glocale = locale;
 	Gmodel = model;
@@ -79,11 +104,11 @@ public String getR2PositionUrl(Locale locale, Model model) throws InterruptedExc
     checkInit();    
 
 
-	return getRobotPositionUrl(0);
+	return getRobotPositionUrl(1);
 	}
 
 @RequestMapping(value = "/r1variables")
-public String getR1Variables(Locale locale, Model model) throws InterruptedException {
+public RcVariable[] getR1Variables(Locale locale, Model model) throws InterruptedException {
 
 	Glocale = locale;
 	Gmodel = model;
@@ -92,8 +117,9 @@ public String getR1Variables(Locale locale, Model model) throws InterruptedExcep
 
 	return getRobotVariables(0);
 	}
+
 @RequestMapping(value = "/r2variables")
-public String getR2Variables(Locale locale, Model model) throws InterruptedException {
+public RcVariable[] getR2Variables(Locale locale, Model model) throws InterruptedException {
 
 	Glocale = locale;
 	Gmodel = model;
@@ -103,21 +129,53 @@ public String getR2Variables(Locale locale, Model model) throws InterruptedExcep
 	return getRobotVariables(1);
 	}
 
-private String getRobotPositionUrl(int robotNumber) {
+@RequestMapping(value = "/r1tasks")
+public RobotControllerTask getR1Tasks(Locale locale, Model model) throws InterruptedException {
+
+	Glocale = locale;
+	Gmodel = model;
+
+    checkInit();    
+    
+    ArrayList<RobotControllerTask> t = getRobotTasks(0);
+
+	return t.get(0);
+	}
+
+@RequestMapping(value = "/r2tasks")
+public ArrayList<RobotControllerTask> getR2Tasks(Locale locale, Model model) throws InterruptedException {
+
+	Glocale = locale;
+	Gmodel = model;
+
+    checkInit();    
+
+	return getRobotTasks(1);
+	}
+
+@ResponseBody
+private RcStatusRobotGroup getRobotPositionUrl(int robotNumber) {
 	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
 	
 	return r.get(robotNumber).getRobotStatusGroupJson();
 }
 
-private String getRobotVariables(int robotNumber) {
+private RcVariable[] getRobotVariables(int robotNumber) {
 	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
 
 	return r.get(robotNumber).GetStatusRobotVarsJson();
 }
 
+private ArrayList<RobotControllerTask> getRobotTasks(int robotNumber) {
+	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
+
+	return r.get(robotNumber).getStatusRobotTasks();
+}
+
 	private void checkInit() {
+		
 		if (FirstInit) {
-			
+			corsConfigurer();
 			// Acquire the list from ControllerService and add it to the model.
 			List<field.sample.amtapp1.domain.model.Controller> controllers = controllerServiceImpl.findAll(FirstInit);
 			
