@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import field.sample.amtapp1.utility_programs.fieldInstance;
+
 
 @Service
 public class CommonDataServiceImpl implements CommonDataService {
@@ -71,80 +73,8 @@ public class CommonDataServiceImpl implements CommonDataService {
 	}
 		
 	private String getJson(String urlString) {
-		StringBuffer result = new StringBuffer();
-		HttpURLConnection con;
+		fieldInstance jso = new fieldInstance(urlString);		
 		
-		try {
-			URL url = new URL(urlString);
-			con = (HttpURLConnection) url.openConnection();
-			con.connect();
-		} 
-		catch (IOException ioex) {
-			logger.warn("openConnection : " + urlString, ioex);
-			return null;
-		}
-		
-		InputStream in;
-		
-		try {
-			in = con.getInputStream();
-		} 
-		catch (IOException ioex) {
-			logger.warn("getInputStream : " + urlString, ioex);
-		
-			try {
-				con.disconnect();
-			}
-			catch(Exception ex) {
-				logger.warn("in.close()", ex);
-			}
-			
-			return null;
-		}
-		
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF-8"));
-			String line;
-			
-			while((line = br.readLine()) != null)
-				{
-				result.append(line);
-				result.append("\n");
-				}
-		} 
-		catch (IOException ioex) {
-			logger.warn("readLine", ioex);
-			
-			try {
-				in.close();
-			}
-			catch(Exception ex) {
-				logger.warn("in.close()", ex);
-			}
-			
-			try {
-				con.disconnect();
-			}
-			catch(Exception ex) {
-				logger.warn("in.close()", ex);
-			}
-			return null;
-		}
-		
-		try {
-			in.close();
-		}
-		catch(Exception ex) {
-			logger.warn("in.close()", ex);
-		}
-		
-		try {
-			con.disconnect();
-		}
-		catch(Exception ex) {
-			logger.warn("in.close()", ex);
-		}
-		
-		return result.toString();
+		return jso.result.toString();
 		}
 	}

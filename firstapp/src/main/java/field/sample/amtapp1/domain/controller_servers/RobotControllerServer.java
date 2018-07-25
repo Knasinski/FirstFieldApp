@@ -11,12 +11,14 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
+import field.sample.amtapp1.domain.controller_variables.RcEventAlarm;
 import field.sample.amtapp1.domain.controller_variables.RcStatusRobotGroup;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.model.CommonDataLink;
 import field.sample.amtapp1.domain.service.CommonDataService;
 import field.sample.amtapp1.utility_programs.DecodeId;
 import field.sample.amtapp1.utility_programs.DecodeName;
+import field.sample.amtapp1.utility_programs.ObjectOfTypeBelongingTo;
 
 
 
@@ -27,6 +29,7 @@ public class RobotControllerServer {
 	private String StatusRCVarTypeStr = "status_robot_controller_variable";
 	private String StatusRCTaskTypeStr = "status_robot_controller_task";
 	private String StatusRobotGroupTypeStr = "status_robot_group";
+	private String EventAlarmTypeStr = "event_alarm";
 	
 	
 	private String ControllerRobotGroupFindStr = "\"controller_robot_group\":";
@@ -34,6 +37,7 @@ public class RobotControllerServer {
 	private String StatusRCVarFindStr = "\"id\":\"status_robot_controller_variable";
 	private String StatusRCTaskFindStr = "\"id\":\"status_robot_controller_task";
 	private String NameFindStr = "\"name\":";
+	private String EventAlarmFindStr = "\"id\":\"event_alarm";
 
 	public String controllerId = "";
 	public String controllerName = "";
@@ -41,6 +45,7 @@ public class RobotControllerServer {
 	public String controllerRobotGroupId = "";
 	public String statusRobotGroupId = "";
 	public String statusRobotTaskId = "";
+	public String controllerRobotEventId = "";
 	
 	
 	public String jointPose = "";
@@ -68,7 +73,6 @@ public class RobotControllerServer {
 	ArrayList<RobotControllerTask> StatusRcTaskList = new ArrayList<RobotControllerTask>();
 	
 	public boolean DataGood;
-	private boolean JrecStarted = false;
 	
 	private CommonDataService commonDataServiceImp;
 	
@@ -89,6 +93,7 @@ public class RobotControllerServer {
 				getControllerRobotGroupId() &&
 				getStatusRobotGroup() &&
 				getStatusRcVariables() &&
+				getControllerRobotEventId() &&
 				getStatusRobotTaskId()) {
 				DataGood = true;
 			}
@@ -98,20 +103,6 @@ public class RobotControllerServer {
 		getStatusRcTaskList();
 		
 		return StatusRcTaskList;
-	}
-	public String getStatusRobotVars() {
-		String mb = "";
-				
-		for (int i=0; i<StatusRcVars.size(); ++i) {
-			getStatusRcVarLst();
-			RcVariable rcv = StatusRcVarLst.get(i);
-			
-			String Uu = (rcv.unit == null) ? "" : rcv.unit;
-			
-			mb += String.format("%-20s%-20s%-20s%-20s%-20s@\0", controllerName, rcv.type, rcv.name, Uu, rcv.getValueUse());
-		}
-		
-		return mb;
 	}
 	
 	public RcVariable[] GetStatusRobotVarsJson() {
@@ -124,6 +115,11 @@ public class RobotControllerServer {
 		return v;
 	}
 	
+	public RcEventAlarm getRcEventAlarm() {
+		String mb = commonDataServiceImp.getLatest(EventAlarmTypeStr, controllerRobotEventId);
+		
+		return new Gson().fromJson(mb, RcEventAlarm.class);
+	}
 	public RcStatusRobotGroup getRobotStatusGroupJson() {
 
 		LatestRcStatusRobotGroup = getLatestStatusRobotGroup();
@@ -131,78 +127,11 @@ public class RobotControllerServer {
 	    return LatestRcStatusRobotGroup;
 	}
 	
-	public String getRobotTasksJson() {
-		getStatusRcTaskList();
-		return commonDataServiceImp.getLatest(StatusRCTaskTypeStr, statusRobotTaskId);
-	}
-	
-	public String getRobotJas()
-	{
-		String rc = "Invalid";
-		String mb = "";
-		
-		LatestRcStatusRobotGroup = getLatestStatusRobotGroup();
-		
-		
-		if (JrecStarted ) {
-			for (int i=0; i<LatestRcStatusRobotGroup.joint_position.value.length; ++i) {
-				double dj = Math.abs(LastJointPosition[i] - LatestRcStatusRobotGroup.joint_position.value[i]);
-				JointOdometer[i] += dj;
-			}
-		}
-		else
-			JrecStarted = true;
-		
-		for (int i=0; i<LatestRcStatusRobotGroup.joint_position.value.length; ++i) {
-			LastJointPosition[i] = LatestRcStatusRobotGroup.joint_position.value[i];
-			
-			String t = String.format("%-9.3f\0", LatestRcStatusRobotGroup.joint_position.value[i]);
-			mb += t;
-		}
-			
-		String xxx = String.format("%-55s |  ", mb);
-		
-		mb = xxx;
-		
-		for (int i=0; i<6; ++i) {
-			String t = String.format("%-15.3f\0", JointOdometer[i]);
-			mb += t;
-		}
-		
-		rc = mb;
-		
-		return rc;
-	}
 	
 	private RcStatusRobotGroup getLatestStatusRobotGroup() {
 		String mb = commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, statusRobotGroupId);
 		
 		return new Gson().fromJson(mb, RcStatusRobotGroup.class);
-	}
-	
-	public String getRobotCartPos()
-	{
-		String rc = "Invalid";
-		String mb = "";
-		
-		if (LatestRcStatusRobotGroup == null)
-			LatestRcStatusRobotGroup = getLatestStatusRobotGroup();
-		
-		if (LatestRcStatusRobotGroup.cartesian_position.value.length > 5) {
-			for (int i=0; i<6; ++i) {
-				String t = String.format("%-9.3f\0", LatestRcStatusRobotGroup.cartesian_position.value[i]);
-				mb += t;
-			}
-				
-			rc =  String.format("%s%-10s%-5d%-5d%-5d%-5d", mb, LatestRcStatusRobotGroup.cartesian_position.configuration,
-					LatestRcStatusRobotGroup.tool_frame_id, LatestRcStatusRobotGroup.user_frame_id,
-					LatestRcStatusRobotGroup.is_running, LatestRcStatusRobotGroup.is_servo_ready); 
-		}
-		else {
-			rc = "ZIPPO";
-		}
-		
-		return rc;
 	}
 	
 	private boolean getControllerName() {
@@ -244,6 +173,16 @@ public class RobotControllerServer {
 		}
 		
 		return false;				
+	}
+	
+	private boolean getControllerRobotEventId() {
+		ObjectOfTypeBelongingTo ootbt = 
+				new ObjectOfTypeBelongingTo(EventAlarmFindStr, EventAlarmTypeStr, robotControllerId, commonDataServiceImp);
+
+		if (ootbt.Good)
+			controllerRobotEventId = ootbt.id;
+		
+		return ootbt.Good;				
 	}
 	
 	private boolean getStatusRobotTaskId() {

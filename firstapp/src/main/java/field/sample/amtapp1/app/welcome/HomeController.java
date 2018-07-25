@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 
 import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
+import field.sample.amtapp1.domain.controller_variables.RcEventAlarm;
 import field.sample.amtapp1.domain.controller_variables.RcStatusRobotGroup;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.service.ControllerService;
@@ -143,14 +144,44 @@ public RobotControllerTask getR1Tasks(Locale locale, Model model) throws Interru
 	}
 
 @RequestMapping(value = "/r2tasks")
-public ArrayList<RobotControllerTask> getR2Tasks(Locale locale, Model model) throws InterruptedException {
+public RobotControllerTask getR2Tasks(Locale locale, Model model) throws InterruptedException {
+	Glocale = locale;
+	Gmodel = model;
+
+    checkInit();    
+    
+    ArrayList<RobotControllerTask> t = getRobotTasks(1);
+
+	return t.get(0);
+	}
+
+
+@RequestMapping(value = "/r1lastalarm")
+public RcEventAlarm getR1LastAlarm(Locale locale, Model model) throws InterruptedException {
 
 	Glocale = locale;
 	Gmodel = model;
 
     checkInit();    
+	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
 
-	return getRobotTasks(1);
+	return r.get(0).getRcEventAlarm();
+	}
+
+
+@RequestMapping(value = "/r2lastalarm")
+public RcEventAlarm getR2LastAlarm(Locale locale, Model model) throws InterruptedException {
+
+	Glocale = locale;
+	Gmodel = model;
+
+    checkInit();    
+	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
+	
+	RobotControllerServer r1 = r.get(0);
+	RobotControllerServer r2 = r.get(1);
+
+	return r.get(1).getRcEventAlarm();
 	}
 
 @ResponseBody
