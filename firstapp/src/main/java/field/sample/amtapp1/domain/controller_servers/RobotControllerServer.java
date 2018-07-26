@@ -12,6 +12,7 @@ import java.util.Comparator;
 
 import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarm;
+import field.sample.amtapp1.domain.controller_variables.RcEventAlarmMoment;
 import field.sample.amtapp1.domain.controller_variables.RcStatusRobotGroup;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.model.CommonDataLink;
@@ -120,6 +121,15 @@ public class RobotControllerServer {
 		
 		return new Gson().fromJson(mb, RcEventAlarm.class);
 	}
+	
+	public RcEventAlarmMoment[] getAllRcEventAlarms() {
+		String mb = commonDataServiceImp.getMoments(EventAlarmTypeStr, controllerRobotEventId);
+		
+		RcEventAlarmMoment[] v = new Gson().fromJson(mb, RcEventAlarmMoment[].class);
+		
+		return v;
+	}
+	
 	public RcStatusRobotGroup getRobotStatusGroupJson() {
 
 		LatestRcStatusRobotGroup = getLatestStatusRobotGroup();

@@ -47,7 +47,11 @@ public class CommonDataServiceImpl implements CommonDataService {
 	
 	public String getRelations(String classId, String instanceId) {
 		String url = BASE_URL + classId + InstanceStr + instanceId + "/relations";
-//		logger.debug("getRelations : " + url);
+		return getJson(url);
+	}
+	
+	public String getMoments(String classId, String instanceId) {
+		String url = BASE_URL + classId + InstanceStr + instanceId + "/moments";
 		return getJson(url);
 	}
 		

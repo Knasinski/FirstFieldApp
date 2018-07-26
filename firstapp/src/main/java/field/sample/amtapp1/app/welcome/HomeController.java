@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarm;
+import field.sample.amtapp1.domain.controller_variables.RcEventAlarmMoment;
 import field.sample.amtapp1.domain.controller_variables.RcStatusRobotGroup;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.service.ControllerService;
@@ -182,6 +183,27 @@ public RcEventAlarm getR2LastAlarm(Locale locale, Model model) throws Interrupte
 	RobotControllerServer r2 = r.get(1);
 
 	return r.get(1).getRcEventAlarm();
+	}
+@RequestMapping(value = "/r1allalarms")
+public RcEventAlarmMoment[] getR1AllAlarms(Locale locale, Model model) throws InterruptedException {
+	Glocale = locale;
+	Gmodel = model;
+
+    checkInit();    
+	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
+
+	return r.get(0).getAllRcEventAlarms();
+	}
+
+@RequestMapping(value = "/r2allalarms")
+public RcEventAlarmMoment[] getR2AllAlarms(Locale locale, Model model) throws InterruptedException {
+	Glocale = locale;
+	Gmodel = model;
+	
+	checkInit();    
+	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
+	
+	return r.get(1).getAllRcEventAlarms();
 	}
 
 @ResponseBody

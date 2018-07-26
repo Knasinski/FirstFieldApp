@@ -7,5 +7,6 @@ public interface CommonDataService
 	public String getLatest(String classId, String instanceId);
 	public String getHistory(String classId, String instanceId);
 	public String getRelations(String classId, String instanceId);
+	public String getMoments(String classId, String instanceId);
 	public int getCount(String classId, String instanceId);
 }
