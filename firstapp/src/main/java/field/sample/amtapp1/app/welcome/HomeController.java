@@ -13,6 +13,7 @@ import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarm;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarmMoment;
+import field.sample.amtapp1.domain.controller_variables.RcOdometer;
 import field.sample.amtapp1.domain.controller_variables.RcStatusRobotGroup;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.service.ControllerService;
@@ -84,7 +85,7 @@ public Greeting home(Locale locale, Model model) throws InterruptedException {
 
 @RequestMapping(value = "/r1position")
 @ResponseBody
-public Object RcStatusRobotGroup(Locale locale, Model model) throws InterruptedException {
+public RcOdometer RcStatusRobotGroup(Locale locale, Model model) throws InterruptedException {
 
 	Glocale = locale;
 	Gmodel = model;
@@ -98,7 +99,7 @@ public Object RcStatusRobotGroup(Locale locale, Model model) throws InterruptedE
 @RequestMapping(value = "/r2position")
 
 @ResponseBody
-public RcStatusRobotGroup getR2PositionUrl(Locale locale, Model model) throws InterruptedException {
+public RcOdometer getR2PositionUrl(Locale locale, Model model) throws InterruptedException {
 
 	Glocale = locale;
 	Gmodel = model;
@@ -207,10 +208,10 @@ public RcEventAlarmMoment[] getR2AllAlarms(Locale locale, Model model) throws In
 	}
 
 @ResponseBody
-private RcStatusRobotGroup getRobotPositionUrl(int robotNumber) {
+private RcOdometer getRobotPositionUrl(int robotNumber) {
 	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
 	
-	return r.get(robotNumber).getRobotStatusGroupJson();
+	return r.get(robotNumber).getRobotOdometerJson();
 }
 
 private RcVariable[] getRobotVariables(int robotNumber) {

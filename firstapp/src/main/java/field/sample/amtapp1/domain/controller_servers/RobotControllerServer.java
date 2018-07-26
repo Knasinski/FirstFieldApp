@@ -3,8 +3,6 @@ package field.sample.amtapp1.domain.controller_servers;
 
 import com.google.gson.Gson;
 
-//import org.json;
-//end Test
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +11,7 @@ import java.util.Comparator;
 import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarm;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarmMoment;
+import field.sample.amtapp1.domain.controller_variables.RcOdometer;
 import field.sample.amtapp1.domain.controller_variables.RcStatusRobotGroup;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.model.CommonDataLink;
@@ -53,6 +52,7 @@ public class RobotControllerServer {
 	public CommonDataLink link = new CommonDataLink();
 	
 	public RcStatusRobotGroup LatestRcStatusRobotGroup;
+	public RcOdometer LatestRcOdometer = null;
 	
 	public int NumExternalAxis = 0;
 	
@@ -97,6 +97,7 @@ public class RobotControllerServer {
 				getControllerRobotEventId() &&
 				getStatusRobotTaskId()) {
 				DataGood = true;
+				updateRcOdometer();
 			}
 	}
 	
@@ -137,11 +138,29 @@ public class RobotControllerServer {
 	    return LatestRcStatusRobotGroup;
 	}
 	
+	public RcOdometer getRobotOdometerJson() {
+
+		updateRcOdometer();
+		
+	    return LatestRcOdometer;
+	}
+	
 	
 	private RcStatusRobotGroup getLatestStatusRobotGroup() {
 		String mb = commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, statusRobotGroupId);
 		
 		return new Gson().fromJson(mb, RcStatusRobotGroup.class);
+	}
+	
+	private void updateRcOdometer() {
+		
+		if (LatestRcOdometer == null) {
+			String mb = commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, statusRobotGroupId);
+			
+			LatestRcOdometer = new RcOdometer(mb, commonDataServiceImp);
+		}
+		else
+			LatestRcOdometer.upDate(statusRobotGroupId);
 	}
 	
 	private boolean getControllerName() {
