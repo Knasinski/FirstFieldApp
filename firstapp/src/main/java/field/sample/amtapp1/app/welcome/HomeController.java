@@ -14,7 +14,6 @@ import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarm;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarmMoment;
 import field.sample.amtapp1.domain.controller_variables.RcOdometer;
-import field.sample.amtapp1.domain.controller_variables.RcTimerArray;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.service.ControllerService;
 
@@ -202,28 +201,6 @@ public RcEventAlarmMoment[] getR2AllAlarms(Locale locale, Model model) throws In
 	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
 	
 	return r.get(1).getAllRcEventAlarms();
-	}
-
-@RequestMapping(value = "/r1lastct")
-public RcTimerArray getR1LastCT(Locale locale, Model model) throws InterruptedException {
-	Glocale = locale;
-	Gmodel = model;
-
-    checkInit();    
-	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
-
-	return r.get(0).GetRcTimersJson();
-	}
-
-@RequestMapping(value = "/r2lastct")
-public RcTimerArray getR2LastCT(Locale locale, Model model) throws InterruptedException {
-	Glocale = locale;
-	Gmodel = model;
-
-    checkInit();    
-	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
-
-	return r.get(1).GetRcTimersJson();
 	}
 
 @ResponseBody

@@ -13,7 +13,6 @@ import field.sample.amtapp1.domain.controller_variables.RcEventAlarm;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarmMoment;
 import field.sample.amtapp1.domain.controller_variables.RcOdometer;
 import field.sample.amtapp1.domain.controller_variables.RcStatusRobotGroup;
-import field.sample.amtapp1.domain.controller_variables.RcTimerArray;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.service.CommonDataService;
 import field.sample.amtapp1.utility_programs.DecodeId;
@@ -62,8 +61,6 @@ public class RobotControllerServer {
 	ArrayList<RobotControllerTask> StatusRcTaskList = new ArrayList<RobotControllerTask>();	
 	
 	public boolean DataGood;
-	
-	private RcTimerArray myTimers;
 	
 	private CommonDataService commonDataServiceImp;
 	
@@ -117,10 +114,6 @@ public class RobotControllerServer {
 	t.start();			
 }
 	
-	public RcTimerArray GetRcTimersJson() {
-		return myTimers;
-	}
-	
 	
 	public RcVariable[] GetStatusRobotVarsJson() {		
 		return StatusRcVarArray;
@@ -133,10 +126,9 @@ public class RobotControllerServer {
         public void run() {  // override the run() to specify the running behavior
         	while (KeepOn) {
         		getStatusRcVarLst();
-        		checkRcTimers();
         		
 	        	try {
-					Thread.sleep(100);
+					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -176,7 +168,7 @@ public class RobotControllerServer {
 	        	updateRcOdometer();
 	        	
 	        	try {
-					Thread.sleep(500);
+					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -317,19 +309,6 @@ public class RobotControllerServer {
 			
 			for (int i=0; i<ml.size(); ++i)
 				StatusRcVarArray[i] = ml.get(i);
-		}
-	}
-	
-	private void checkRcTimers() {
-
-		if (this.myTimers == null) {
-			this.myTimers = new RcTimerArray();
-		}
-		
-		for (int i=0; i<StatusRcVarArray.length; ++i) {
-			if (StatusRcVarArray[i].type.startsWith("$TIMER")) {
-				this.myTimers.checkAdd(StatusRcVarArray[i]);
-			}
 		}
 	}
 	
