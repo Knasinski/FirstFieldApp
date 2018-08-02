@@ -13,8 +13,8 @@ import field.sample.amtapp1.domain.controller_variables.RcEventAlarm;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarmMoment;
 import field.sample.amtapp1.domain.controller_variables.RcOdometer;
 import field.sample.amtapp1.domain.controller_variables.RcStatusRobotGroup;
+import field.sample.amtapp1.domain.controller_variables.RcTimerArray;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
-import field.sample.amtapp1.domain.model.CommonDataLink;
 import field.sample.amtapp1.domain.service.CommonDataService;
 import field.sample.amtapp1.utility_programs.DecodeId;
 import field.sample.amtapp1.utility_programs.DecodeName;
@@ -47,33 +47,23 @@ public class RobotControllerServer {
 	public String statusRobotTaskId = "";
 	public String controllerRobotEventId = "";
 	
-	
-	public String jointPose = "";
-	public CommonDataLink link = new CommonDataLink();
-	
 	public RcStatusRobotGroup LatestRcStatusRobotGroup;
 	public RcOdometer LatestRcOdometer = null;
 	
 	public int NumExternalAxis = 0;
 	
 	public int Count = 0;
-	
-	public double[] LastJointPosition = {0,0,0,0,0,0,0,0,0};
-	public double[] JointOdometer = {0,0,0,0,0,0,0,0,0};
-	
-	
-	public double[] CartesianPosition = {0,0,0,0,0,0,0,0,0};
-	public String Configuration = "";
 
 	ArrayList<String> StatusRcVars = new ArrayList<String>();
 	
 	ArrayList<RcVariable> StatusRcVarLst = new ArrayList<RcVariable>();
+	RcVariable[] StatusRcVarArray = null;
 	
-//	String StatusRcVarsJson = "";
-	
-	ArrayList<RobotControllerTask> StatusRcTaskList = new ArrayList<RobotControllerTask>();
+	ArrayList<RobotControllerTask> StatusRcTaskList = new ArrayList<RobotControllerTask>();	
 	
 	public boolean DataGood;
+	
+	private RcTimerArray myTimers;
 	
 	private CommonDataService commonDataServiceImp;
 	
@@ -97,25 +87,66 @@ public class RobotControllerServer {
 				getControllerRobotEventId() &&
 				getStatusRobotTaskId()) {
 				DataGood = true;
-				updateRcOdometer();
+				startPositionMonitoring();
+				startRcVariableMonitoring();
+				startRcTaskMonitoring();
 			}
 	}
 	
-	public ArrayList<RobotControllerTask> getStatusRobotTasks() {
-		getStatusRcTaskList();
-		
+	public ArrayList<RobotControllerTask> getStatusRobotTasks() {	
 		return StatusRcTaskList;
 	}
+	private void startRcTaskMonitoring() {
+		boolean KeepOn = true;
+		Thread t = new Thread() {
+        @Override
+        public void run() {  // override the run() to specify the running behavior
+        	while (KeepOn) {
+        		getStatusRcTaskList();
+	        	
+	        	try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+        }
+    };
+		
+	t.start();			
+}
 	
-	public RcVariable[] GetStatusRobotVarsJson() {
-		getStatusRcVarLst();
-		RcVariable[] v = new RcVariable[StatusRcVarLst.size()];
-		
-		for (int i=0; i<StatusRcVarLst.size(); ++i)
-			v[i] = StatusRcVarLst.get(i);
-		
-		return v;
+	public RcTimerArray GetRcTimersJson() {
+		return myTimers;
 	}
+	
+	
+	public RcVariable[] GetStatusRobotVarsJson() {		
+		return StatusRcVarArray;
+	}
+	
+	private void startRcVariableMonitoring() {
+		boolean KeepOn = true;
+		Thread t = new Thread() {
+        @Override
+        public void run() {  // override the run() to specify the running behavior
+        	while (KeepOn) {
+        		getStatusRcVarLst();
+        		checkRcTimers();
+        		
+	        	try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+        }
+    };
+		
+	t.start();			
+}
 	
 	public RcEventAlarm getRcEventAlarm() {
 		String mb = commonDataServiceImp.getLatest(EventAlarmTypeStr, controllerRobotEventId);
@@ -131,26 +162,31 @@ public class RobotControllerServer {
 		return v;
 	}
 	
-	public RcStatusRobotGroup getRobotStatusGroupJson() {
-
-		LatestRcStatusRobotGroup = getLatestStatusRobotGroup();
-		
-	    return LatestRcStatusRobotGroup;
-	}
 	
 	public RcOdometer getRobotOdometerJson() {
-
-		updateRcOdometer();
-		
 	    return LatestRcOdometer;
 	}
 	
-	
-	private RcStatusRobotGroup getLatestStatusRobotGroup() {
-		String mb = commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, statusRobotGroupId);
+	private void startPositionMonitoring() {
+		boolean KeepOn = true;
+		Thread t = new Thread() {
+        @Override
+        public void run() {  // override the run() to specify the running behavior
+        	while (KeepOn) {
+	        	updateRcOdometer();
+	        	
+	        	try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+        }
+    };
 		
-		return new Gson().fromJson(mb, RcStatusRobotGroup.class);
-	}
+	t.start();			
+}
 	
 	private void updateRcOdometer() {
 		
@@ -266,14 +302,35 @@ public class RobotControllerServer {
 	}
 	
 	private void getStatusRcVarLst() {
-		StatusRcVarLst = new ArrayList<RcVariable>();
+		ArrayList<RcVariable> ml = new ArrayList<RcVariable>();
 				
 		for (int i=0; i<StatusRcVars.size(); ++i) {
 			String mb = commonDataServiceImp.getLatest(StatusRCVarTypeStr, StatusRcVars.get(i)).replace("\n", "");
-			StatusRcVarLst.add(new Gson().fromJson(mb, RcVariable.class));
+			ml.add(new Gson().fromJson(mb, RcVariable.class));
 		}	
 		
-		Collections.sort(StatusRcVarLst, new SortByType());
+		if (ml.size() != 0) {
+			Collections.sort(ml, new SortByType());
+	
+			if (StatusRcVarArray == null)
+				StatusRcVarArray = new RcVariable[ml.size()];
+			
+			for (int i=0; i<ml.size(); ++i)
+				StatusRcVarArray[i] = ml.get(i);
+		}
+	}
+	
+	private void checkRcTimers() {
+
+		if (this.myTimers == null) {
+			this.myTimers = new RcTimerArray();
+		}
+		
+		for (int i=0; i<StatusRcVarArray.length; ++i) {
+			if (StatusRcVarArray[i].type.startsWith("$TIMER")) {
+				this.myTimers.checkAdd(StatusRcVarArray[i]);
+			}
+		}
 	}
 	
 	private void getStatusRcTaskList() {

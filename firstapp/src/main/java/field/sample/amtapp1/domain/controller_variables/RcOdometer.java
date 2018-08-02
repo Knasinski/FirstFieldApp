@@ -27,6 +27,7 @@ public class RcOdometer {
 	public void upDate(String statusRobotGroupId) {
 		double[] dxdydz = {0,0,0};
 		
+		try {
 		currentStatusRobotGroup =  
 				new Gson().fromJson(commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, 
 						statusRobotGroupId), RcStatusRobotGroup.class);
@@ -47,7 +48,10 @@ public class RcOdometer {
 		}
 		
 		lastCartPosition = currentStatusRobotGroup.cartesian_position;
-		lastJointPosition = currentStatusRobotGroup.joint_position;		
+		lastJointPosition = currentStatusRobotGroup.joint_position;	
+		} catch (Exception e) {
+			e.printStackTrace(); 
+		}
 	}
 
 }

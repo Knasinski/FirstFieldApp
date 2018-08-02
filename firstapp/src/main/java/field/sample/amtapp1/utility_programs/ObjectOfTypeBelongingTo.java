@@ -2,7 +2,6 @@ package field.sample.amtapp1.utility_programs;
 
 import java.util.ArrayList;
 
-import field.sample.amtapp1.domain.model.CommonDataLink;
 import field.sample.amtapp1.domain.service.CommonDataService;
 
 public class ObjectOfTypeBelongingTo {
