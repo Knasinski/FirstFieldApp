@@ -24,17 +24,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 
 /**
 * Handles requests for the application home page.
-* 
+* @CrossOrigin(origins = "http://localhost:8080")
 */
 
 
-@CrossOrigin(origins = "http://localhost:8080")
+
 @RestController
 public class HomeController {
 private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
@@ -45,12 +46,23 @@ private static boolean FirstInit = true;
 
 private static boolean UsingMyHtml = false;
 
-@Bean
 
+public void addResourceHandlers(ResourceHandlerRegistry registry) {
+	if (!registry.hasMappingForPattern("/webjars/**")) {
+		registry.addResourceHandler("/webjars/**").addResourceLocations(
+				"classpath:/META-INF/resources/webjars/");
+	}
+	if (!registry.hasMappingForPattern("/**")) {
+		registry.addResourceHandler("/**").addResourceLocations(
+				"/firstapp/**");
+	}
+}
+
+@Bean
 public WebMvcConfigurer corsConfigurer() { return new WebMvcConfigurerAdapter() {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
+        registry.addMapping("/firstapp/**")								// Had registry.addMapping("/**")	
                 .allowedOrigins("http://localhost:8080")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
                 .allowedHeaders("header1", "header2") //What is this for?

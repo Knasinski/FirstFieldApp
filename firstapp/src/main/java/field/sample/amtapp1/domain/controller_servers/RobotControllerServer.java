@@ -301,7 +301,7 @@ public class RobotControllerServer {
 			ml.add(new Gson().fromJson(mb, RcVariable.class));
 		}	
 		
-		if (ml.size() != 0) {
+		if ((ml != null) && ml.size() != 0) {
 			Collections.sort(ml, new SortByType());
 	
 			if (StatusRcVarArray == null)
@@ -342,6 +342,15 @@ class SortByType implements Comparator<RcVariable>
     // roll number
     public int compare(RcVariable a, RcVariable b)
     {
+    	if ((a.type == null) && (b.type == null))
+    		return 0;
+    	
+    	if (a.type == null)
+    		return 1;
+    	
+    	if (b.type == null)
+    		return -1;
+    	
     	return a.type.compareTo(b.type);
     }
 }

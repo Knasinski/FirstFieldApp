@@ -32,20 +32,22 @@ public class RcOdometer {
 				new Gson().fromJson(commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, 
 						statusRobotGroupId), RcStatusRobotGroup.class);
 		
-		for (int i=0; i<odometerJointPosition.value.length; ++i) {
-			double dj = Math.abs(currentStatusRobotGroup.joint_position.value[i] - lastJointPosition.value[i]);
-			odometerJointPosition.value[i] += dj;
-			
-			if (i<3) {
-				double dp = Math.abs(currentStatusRobotGroup.cartesian_position.value[i] - lastCartPosition.value[i]);
-				odometerCartPosition.value[i] += dp;
-				dxdydz[i] = dp;
+		for (int i=0; i<odometerJointPosition.value.length; ++i) {			
+				if ((currentStatusRobotGroup.joint_position != null) && (currentStatusRobotGroup.cartesian_position != null)) {
+					double dj = Math.abs(currentStatusRobotGroup.joint_position.value[i] - lastJointPosition.value[i]);
+					odometerJointPosition.value[i] += dj;
+					
+					if (i<3) {
+						double dp = Math.abs(currentStatusRobotGroup.cartesian_position.value[i] - lastCartPosition.value[i]);
+						odometerCartPosition.value[i] += dp;
+						dxdydz[i] = dp;
+					}
+					else if (i==3) {
+						odometerCartPosition.value[i] = Math.sqrt(Math.pow(odometerCartPosition.value[0], 2) + 
+								Math.pow(odometerCartPosition.value[1], 2) + Math.pow(odometerCartPosition.value[2], 2));
+					}
+				}
 			}
-			else if (i==3) {
-				odometerCartPosition.value[i] = Math.sqrt(Math.pow(odometerCartPosition.value[0], 2) + 
-						Math.pow(odometerCartPosition.value[1], 2) + Math.pow(odometerCartPosition.value[2], 2));
-			}
-		}
 		
 		lastCartPosition = currentStatusRobotGroup.cartesian_position;
 		lastJointPosition = currentStatusRobotGroup.joint_position;	

@@ -35,7 +35,7 @@ public class ControllerServiceImpl implements ControllerService {
 	
 	@Override
 	public List<Controller> findAll(boolean RcListBuild)  {
-		ArrayList<Controller> list = new ArrayList<>();
+		ArrayList<Controller> list = new ArrayList<Controller>();
 		RcList = new ArrayList<>();
 		
 		// Acquire a list of instances in the controller class from CommonDataService in a JSON string.
@@ -49,8 +49,12 @@ public class ControllerServiceImpl implements ControllerService {
 		// Convert the JSON string of the controller class into an array of the CommonDataController class.
 		CommonDataController[] controllers = new Gson().fromJson(controllersJson, CommonDataController[].class);
 		Integer i=1;
+		
+		if (controllers == null) {
+			return list;
+		}
 		//CommonDataController
-		for(CommonDataController controller:controllers) {
+		for (CommonDataController controller:controllers) {
 			
 			controller.controller_type = getControllerType(controller);
 			
