@@ -10,7 +10,7 @@ import field.sample.amtapp1.utility_programs.fieldInstance;
 @Service
 public class CommonDataServiceImpl implements CommonDataService {
 	private static final Logger logger = LoggerFactory.getLogger(CommonDataServiceImpl.class);
-	private static final String BASE_URL = "http://192.168.99.100:8083/field_api/v3/class/";
+	private static final String BASE_URL = "http://192.168.99.101:8083/field_api/v3/class/";
 	private static final String InstanceStr = "/instance/";
 	
 	public String getInstances(String classId) {
