@@ -88,12 +88,11 @@ href="${pageContext.request.contextPath}/resources/app/css/styles.css">
 </div>
 
 <!-- Tab content -->
-<div id="Controllers" class="tabcontent">          Cartesian Position</h3>
+<div id="Controllers" class="tabcontent">          Cartesian Position</div>
 	<div>${Thdrs}</div>
 	<div id="r1TaskData1">r1VarData1</div>
 	<hr>
 	<div id="r2TaskData1">r1VarData1</div>
-</div> 
 
 <div id="Position Data" class="tabcontent">
 	<h3>                        Joint Position                                                              Joint Odometer</h3>	

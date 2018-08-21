@@ -36,6 +36,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 * 
 */
 
+ 
 
 @CrossOrigin(origins = homeConstants.localHost)
 @RestController
@@ -59,8 +60,7 @@ public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler(homeConstants.webJars).addResourceLocations(homeConstants.classPathWebJars);
 	}
 	if (!registry.hasMappingForPattern(homeConstants.slashStarStar)) {
-		registry.addResourceHandler(homeConstants.slashStarStar).addResourceLocations(
-				"/firstapp/**");
+		registry.addResourceHandler(homeConstants.slashStarStar).addResourceLocations(homeConstants.firstApp);
 	}
 }
 
@@ -109,9 +109,11 @@ public RcOdometer RcStatusRobotGroup(Locale locale, Model model) throws Interrup
 	Gmodel = model;
     
     checkInit();    
+    
+    RcOdometer r = getRobotPositionUrl(0);
 
 
-    return getRobotPositionUrl(0);
+    return r;
 	}
 
 @RequestMapping(value = "/r2position")
@@ -244,6 +246,7 @@ public fieldInstance[] getLog(Locale locale, Model model) {
 	return fiDebug;
 	}
 
+
 @ResponseBody
 private RcOdometer getRobotPositionUrl(int robotNumber) {
 	ArrayList<RobotControllerServer> r = field.sample.amtapp1.domain.service.ControllerServiceImpl.RcList;
@@ -267,7 +270,6 @@ private ArrayList<RobotControllerTask> getRobotTasks(int robotNumber) {
 	private void checkInit() {
 		
 		if (FirstInit) {
-			homeDiag = new Diagnostics();
 			corsConfigurer();
 			// Acquire the list from ControllerService and add it to the model.
 			List<field.sample.amtapp1.domain.model.Controller> controllers = controllerServiceImpl.findAll(FirstInit);
