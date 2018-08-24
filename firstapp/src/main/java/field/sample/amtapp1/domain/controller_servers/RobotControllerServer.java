@@ -74,7 +74,7 @@ public class RobotControllerServer {
 		commonDataServiceImp = cdsi;
 		DataGood = false;
 		
-		//Attempt to get the RcID
+		//Get all required data
 		if (getControllerName() && 
 				getRobotControllerId() && 
 				getCount(RobotControllTypeStr, robotControllerId) && 

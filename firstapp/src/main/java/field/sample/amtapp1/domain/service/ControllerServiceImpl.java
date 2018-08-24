@@ -1,6 +1,8 @@
 package field.sample.amtapp1.domain.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.lang.String;
 
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.Gson;
 
 import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
+import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.model.CommonDataController;
 import field.sample.amtapp1.domain.model.CommonDataControllerCnc;
 import field.sample.amtapp1.domain.model.CommonDataControllerHistory;
@@ -74,6 +77,10 @@ public class ControllerServiceImpl implements ControllerService {
 				
 				list.add(new Controller(controller.id, controller.name, controller.controller_type));
 			}
+		}
+		
+		if ((RcList != null) && RcList.size() != 0) {
+			Collections.sort(RcList, new SortByControllerName());
 		}
 		
 	return list;
@@ -176,7 +183,25 @@ public class ControllerServiceImpl implements ControllerService {
 		}
 		
 		return ct;
-	}
-	
+	}	
+}
+
+class SortByControllerName implements Comparator<RobotControllerServer>
+{
+    // Used for sorting in ascending order of
+    // roll number
+    public int compare(RobotControllerServer a, RobotControllerServer b)
+    {
+    	if ((a.controllerName == null) && (b.controllerName == null))
+    		return 0;
+    	
+    	if (a.controllerName == null)
+    		return 1;
+    	
+    	if (b.controllerName == null)
+    		return -1;
+    	
+    	return a.controllerName.compareTo(b.controllerName);
+    }
 }
 	
