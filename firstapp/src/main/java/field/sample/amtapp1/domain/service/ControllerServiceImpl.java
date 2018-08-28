@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
+import field.sample.amtapp1.domain.controller_servers.CncControllerServer;
 import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.model.CommonDataController;
@@ -32,6 +33,7 @@ public class ControllerServiceImpl implements ControllerService {
 	public static double meaningless = 0.0;
 	
 	public static ArrayList<RobotControllerServer> RcList;
+	public static ArrayList<CncControllerServer> CncList;
 	
 	@Autowired
 	private CommonDataService commonDataServiceImpl;
@@ -39,10 +41,11 @@ public class ControllerServiceImpl implements ControllerService {
 	@Override
 	public List<Controller> findAll(boolean RcListBuild)  {
 		ArrayList<Controller> list = new ArrayList<Controller>();
-		RcList = new ArrayList<>();
+		RcList = new ArrayList<RobotControllerServer>();
+		CncList = new ArrayList<CncControllerServer>();
 		
 		// Acquire a list of instances in the controller class from CommonDataService in a JSON string.
-		String controllersJson = commonDataServiceImpl.getInstances("controller");
+		String controllersJson = commonDataServiceImpl.getInstances("controller").toString();
 		
 		if(controllersJson == null) {
 			logger.warn("failure : get controllers");
@@ -74,21 +77,33 @@ public class ControllerServiceImpl implements ControllerService {
 							RcList.add(rci);
 					}
 				}
-				
-				list.add(new Controller(controller.id, controller.name, controller.controller_type));
 			}
+			else if ("controller_cnc".equals(controller.controller_type)) {
+				if (RcListBuild) {
+					CncControllerServer cci = new CncControllerServer(controller.id, commonDataServiceImpl);
+					
+					if (cci.DataGood) {
+						if (!CncList.contains(cci))
+							CncList.add(cci);
+					}
+				}				
+			}
+			
+			list.add(new Controller(controller.id, controller.name, controller.controller_type));
 		}
 		
-		if ((RcList != null) && RcList.size() != 0) {
+		if ((RcList != null) && (RcList.size() != 0))
 			Collections.sort(RcList, new SortByControllerName());
-		}
+		
+		if ((CncList != null) && (CncList.size() != 0)) 
+			Collections.sort(CncList, new SortByCncControllerName());
 		
 	return list;
 	}
 
 	public void queryCncData(String controllerId) {
 	// Acquisition of instance
-	String instanceJson = commonDataServiceImpl.getInstance("controller",controllerId);
+	String instanceJson = commonDataServiceImpl.getInstance("controller", controllerId).toString();
 	
 		if(instanceJson == null) {
 		logger.warn("failure : get controller " + controllerId);
@@ -108,7 +123,7 @@ public class ControllerServiceImpl implements ControllerService {
 	}
 	
 	// Acquisition of latest
-	String latestJson = commonDataServiceImpl.getLatest("controller",controllerId);
+	String latestJson = commonDataServiceImpl.getLatest("controller",controllerId).toString();
 		if(latestJson == null) {
 		logger.warn("failure : get latest " + controllerId);
 		return;
@@ -118,7 +133,7 @@ public class ControllerServiceImpl implements ControllerService {
 	
 	logger.debug("latest model : " + latest.model);
 	// Acquisition of history
-	String historyJson = commonDataServiceImpl.getHistory("controller",controllerId);
+	String historyJson = commonDataServiceImpl.getHistory("controller",controllerId).toString();
 	
 	if(historyJson == null) {
 		logger.warn("failure : get history " + controllerId);
@@ -134,7 +149,7 @@ public class ControllerServiceImpl implements ControllerService {
 	}
 	
 	// Acquisition of relations
-	String relationsJson = commonDataServiceImpl.getRelations("controller",controllerId);
+	String relationsJson = commonDataServiceImpl.getRelations("controller",controllerId).toString();
 	
 	if(relationsJson == null) {
 		logger.warn("failure : get relations" + controllerId);
@@ -162,7 +177,7 @@ public class ControllerServiceImpl implements ControllerService {
 		
 		
 		if (controller.controller_type.equals(ct) || (controller.controller_type.length() == 0)) {
-			String mb = commonDataServiceImpl.getRelations("controller", controller.id);
+			String mb = commonDataServiceImpl.getRelations("controller", controller.id).toString();
 			
 			if ((mb.length() != 0) && mb.contains("id")) {
 				if (mb.contains("controller_injection"))
@@ -191,6 +206,25 @@ class SortByControllerName implements Comparator<RobotControllerServer>
     // Used for sorting in ascending order of
     // roll number
     public int compare(RobotControllerServer a, RobotControllerServer b)
+    {
+    	if ((a.controllerName == null) && (b.controllerName == null))
+    		return 0;
+    	
+    	if (a.controllerName == null)
+    		return 1;
+    	
+    	if (b.controllerName == null)
+    		return -1;
+    	
+    	return a.controllerName.compareTo(b.controllerName);
+    }
+}
+
+class SortByCncControllerName implements Comparator<CncControllerServer>
+{
+    // Used for sorting in ascending order of
+    // roll number
+    public int compare(CncControllerServer a, CncControllerServer b)
     {
     	if ((a.controllerName == null) && (b.controllerName == null))
     		return 0;

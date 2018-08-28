@@ -14,12 +14,12 @@ public class ObjectOfTypeBelongingTo {
 	public ObjectOfTypeBelongingTo(String recogType, String findType, String belongsTo, CommonDataService cdsi ) {
 		
 		commonDataServiceImp = cdsi;
-		String mb = commonDataServiceImp.getInstances(findType);
+		String mb = commonDataServiceImp.getInstances(findType).toString();
 		
 		ArrayList<String> idLst = IdsFound(mb, recogType);
 		
 		for (int i=0; i<idLst.size(); ++i) {
-			String s = commonDataServiceImp.getRelations("event_alarm", idLst.get(i));
+			String s = commonDataServiceImp.getRelations("event_alarm", idLst.get(i)).toString().toString();
 			
 			if (s.contains("\"id\":")) {
 				s = s.substring(s.indexOf("\"id\":") + "\"id\":".length()+1);

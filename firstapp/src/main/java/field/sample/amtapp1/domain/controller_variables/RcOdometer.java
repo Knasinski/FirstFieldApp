@@ -30,7 +30,7 @@ public class RcOdometer {
 		try {
 		currentStatusRobotGroup =  
 				new Gson().fromJson(commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, 
-						statusRobotGroupId), RcStatusRobotGroup.class);
+						statusRobotGroupId).toString(), RcStatusRobotGroup.class);
 		
 		for (int i=0; i<odometerJointPosition.value.length; ++i) {			
 				if ((currentStatusRobotGroup.joint_position != null) && (currentStatusRobotGroup.cartesian_position != null)) {

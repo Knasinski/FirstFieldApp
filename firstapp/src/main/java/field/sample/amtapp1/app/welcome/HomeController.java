@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 
 import field.sample.amtapp1.diags.Diagnostics;
+import field.sample.amtapp1.domain.controller_servers.CncControllerServer;
 import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
 import field.sample.amtapp1.domain.controller_tasks.RobotControllerTask;
+import field.sample.amtapp1.domain.controller_variables.CncSensorData;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarm;
 import field.sample.amtapp1.domain.controller_variables.RcEventAlarmMoment;
 import field.sample.amtapp1.domain.controller_variables.RcOdometer;
@@ -242,6 +244,17 @@ public fieldInstance[] getLog(Locale locale, Model model) {
 	checkInit();
 
 	return fiDebug;
+	}
+
+@RequestMapping(value = "/getgudel")
+public CncSensorData[] getGüdel(Locale locale, Model model) {
+	Glocale = locale;
+	Gmodel = model;
+	
+	checkInit();
+	ArrayList<CncControllerServer> ccs = field.sample.amtapp1.domain.service.ControllerServiceImpl.CncList;
+
+	return ccs.get(0).getCncSensorData();
 	}
 
 @ResponseBody

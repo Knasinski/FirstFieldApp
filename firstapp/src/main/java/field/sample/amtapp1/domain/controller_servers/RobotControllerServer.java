@@ -112,7 +112,7 @@ public class RobotControllerServer {
     };
 		
 	t.start();			
-}
+	}
 	
 	
 	public RcVariable[] GetStatusRobotVarsJson() {		
@@ -141,13 +141,13 @@ public class RobotControllerServer {
 }
 	
 	public RcEventAlarm getRcEventAlarm() {
-		String mb = commonDataServiceImp.getLatest(EventAlarmTypeStr, controllerRobotEventId);
+		String mb = commonDataServiceImp.getLatest(EventAlarmTypeStr, controllerRobotEventId).toString();
 		
 		return new Gson().fromJson(mb, RcEventAlarm.class);
 	}
 	
 	public RcEventAlarmMoment[] getAllRcEventAlarms() {
-		String mb = commonDataServiceImp.getMoments(EventAlarmTypeStr, controllerRobotEventId);
+		String mb = commonDataServiceImp.getMoments(EventAlarmTypeStr, controllerRobotEventId).toString();
 		
 		RcEventAlarmMoment[] v = new Gson().fromJson(mb, RcEventAlarmMoment[].class);
 		
@@ -183,7 +183,7 @@ public class RobotControllerServer {
 	private void updateRcOdometer() {
 		
 		if (LatestRcOdometer == null) {
-			String mb = commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, statusRobotGroupId);
+			String mb = commonDataServiceImp.getLatest(StatusRobotGroupTypeStr, statusRobotGroupId).toString();
 			
 			LatestRcOdometer = new RcOdometer(mb, commonDataServiceImp);
 		}
@@ -192,7 +192,7 @@ public class RobotControllerServer {
 	}
 	
 	private boolean getControllerName() {
-		String mb = commonDataServiceImp.getInstance("controller", controllerId);
+		String mb = commonDataServiceImp.getInstance("controller", controllerId).toString();
 		DecodeName rc = new DecodeName(mb);
 		
 		if (rc.Good)
@@ -201,7 +201,7 @@ public class RobotControllerServer {
 		return rc.Good;
 	}
 	private boolean getRobotControllerId() {
-		String mb = commonDataServiceImp.getRelations("controller", controllerId);
+		String mb = commonDataServiceImp.getRelations("controller", controllerId).toString();
 		
 		DecodeId rc = new DecodeId(RobotControllTypeStr, mb);
 		
@@ -217,7 +217,7 @@ public class RobotControllerServer {
 	}
 	
 	private boolean getControllerRobotGroupId() {
-		String mb = commonDataServiceImp.getRelations(RobotControllTypeStr, robotControllerId);
+		String mb = commonDataServiceImp.getRelations(RobotControllTypeStr, robotControllerId).toString();
 				
 		if (mb.contains(ControllerRobotGroupFindStr)) {
 			mb=mb.substring(mb.indexOf(ControllerRobotGroupFindStr));
@@ -243,7 +243,7 @@ public class RobotControllerServer {
 	}
 	
 	private boolean getStatusRobotTaskId() {
-		String mb = commonDataServiceImp.getRelations(RobotControllTypeStr, robotControllerId);
+		String mb = commonDataServiceImp.getRelations(RobotControllTypeStr, robotControllerId).toString();
 		
 		if (mb.contains(StatusRCTaskFindStr)) {
 			mb=mb.substring(mb.indexOf(StatusRCTaskFindStr));
@@ -259,7 +259,7 @@ public class RobotControllerServer {
 	}
 	
 	private boolean getStatusRobotGroup() {
-		String mb = commonDataServiceImp.getRelations(ControllerRobotGroupTypeStr, controllerRobotGroupId);
+		String mb = commonDataServiceImp.getRelations(ControllerRobotGroupTypeStr, controllerRobotGroupId).toString();
 		
 		if (mb.contains(StatusRobotGroupFindStr)) {
 			mb=mb.substring(mb.indexOf(StatusRobotGroupFindStr));
@@ -276,7 +276,7 @@ public class RobotControllerServer {
 	
 	private boolean getStatusRcVariables() {
 		StatusRcVars = new ArrayList<String>();
-		String mb = commonDataServiceImp.getRelations(RobotControllTypeStr, robotControllerId);
+		String mb = commonDataServiceImp.getRelations(RobotControllTypeStr, robotControllerId).toString();
 		
 		try {
 			while (mb.contains(StatusRCVarFindStr)) {
@@ -297,7 +297,8 @@ public class RobotControllerServer {
 		ArrayList<RcVariable> ml = new ArrayList<RcVariable>();
 				
 		for (int i=0; i<StatusRcVars.size(); ++i) {
-			String mb = commonDataServiceImp.getLatest(StatusRCVarTypeStr, StatusRcVars.get(i)).replace("\n", "");
+			String mb = commonDataServiceImp.getLatest(StatusRCVarTypeStr, StatusRcVars.get(i)).toString();
+			mb = mb.replace("\n", "");
 			ml.add(new Gson().fromJson(mb, RcVariable.class));
 		}	
 		
@@ -313,7 +314,7 @@ public class RobotControllerServer {
 	}
 	
 	private void getStatusRcTaskList() {
-		String mb = commonDataServiceImp.getLatest(StatusRCTaskTypeStr, statusRobotTaskId);
+		String mb = commonDataServiceImp.getLatest(StatusRCTaskTypeStr, statusRobotTaskId).toString();
 		
 		if (mb.length() != 0) {
 			StatusRcTaskList = new ArrayList<RobotControllerTask>();

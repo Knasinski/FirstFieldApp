@@ -14,41 +14,41 @@ public class CommonDataServiceImpl implements CommonDataService {
 	private static String BaseUrl = "";
 	private static final String InstanceStr = "/instance/";
 	
-	public String getInstances(String classId) {
+	public StringBuffer getInstances(String classId) {
 		checkBaseUrl();
 		String url = BaseUrl + classId;
 //		logger.debug("getInstances : " + url);
 		return getJson(url);
 	}
 	
-	public String getInstance(String classId, String instanceId) {
+	public StringBuffer getInstance(String classId, String instanceId) {
 		checkBaseUrl();
 		String url = BaseUrl + classId + InstanceStr + instanceId;
 //		logger.debug("getInstance : " + url);
 		return getJson(url);
 	}
 	
-	public String getLatest(String classId, String instanceId) {
+	public StringBuffer getLatest(String classId, String instanceId) {
 		checkBaseUrl();
 		String url = BaseUrl + classId + InstanceStr + instanceId + "/latest";
 //		logger.debug("getLatest : " + url);
 		return getJson(url);
 	}
 		
-	public String getHistory(String classId, String instanceId) {
+	public StringBuffer getHistory(String classId, String instanceId) {
 		checkBaseUrl();
 		String url = BaseUrl + classId + InstanceStr + instanceId + "/history";
 //		logger.debug("getHistory : " + url);
 		return getJson(url);
 	}
 	
-	public String getRelations(String classId, String instanceId) {
+	public StringBuffer getRelations(String classId, String instanceId) {
 		checkBaseUrl();
 		String url = BaseUrl + classId + InstanceStr + instanceId + "/relations";
 		return getJson(url);
 	}
 	
-	public String getMoments(String classId, String instanceId) {
+	public StringBuffer getMoments(String classId, String instanceId) {
 		String url = BaseUrl + classId + InstanceStr + instanceId + "/moments";
 		return getJson(url);
 	}
@@ -57,9 +57,9 @@ public class CommonDataServiceImpl implements CommonDataService {
 		checkBaseUrl();
 		String url = BaseUrl + classId + InstanceStr + instanceId + "/count";
 //		logger.debug("getCount : " + url);
-		String rc = getJson(url);
+		StringBuffer rc = getJson(url);
 		
-		if (rc.contains("count") && rc.contains(":")) {
+		if (rc.toString().contains("count") && rc.toString().contains(":")) {
 			try {
 				String s = rc.substring(rc.indexOf(":") + 1);
 				s = s.substring(0, s.indexOf("}"));
@@ -75,13 +75,18 @@ public class CommonDataServiceImpl implements CommonDataService {
 		return 0;
 	}
 		
-	private String getJson(String urlString) {
+	private StringBuffer getJson(String urlString) {
 		try {
 			fieldInstance jso = new fieldInstance(urlString);		
 			
-			return jso.result.toString();
+			return jso.result;
 			} catch (Exception e) {
-				return e.getMessage();
+				
+				StringBuffer x = new StringBuffer();
+				
+				x.append(e.getMessage());
+				
+				return x;
 			}
 		}
 	
