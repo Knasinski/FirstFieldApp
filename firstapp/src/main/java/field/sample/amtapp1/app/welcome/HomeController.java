@@ -41,16 +41,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 @CrossOrigin(origins = homeConstants.localHost)
 @RestController
-public class HomeController {
-	
-	
+public class HomeController {	
 private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 private static boolean FirstInit = true;
 private static boolean UsingMyHtml = false;
 
 public static Locale Glocale;
 public static Model Gmodel;
-public static Diagnostics homeDiag = null;
+
+public static boolean debugLogging = false;
+
+public static Diagnostics homeDiag = new Diagnostics();
 
 public static fieldInstance[] fiDebug = new fieldInstance[1];
 public static int numDebugged = 0;
@@ -68,6 +69,7 @@ public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
 @Bean
 public WebMvcConfigurer corsConfigurer() { 
+	checkInit();
 	return new WebMvcConfigurerAdapter() {
 	    @Override
 	    public void addCorsMappings(CorsRegistry registry) {
@@ -79,7 +81,6 @@ public WebMvcConfigurer corsConfigurer() {
 	    	}
 	};
 }
-
 
 @Autowired
 private ControllerService controllerServiceImpl;
@@ -94,8 +95,7 @@ public Greeting home(Locale locale, Model model) throws InterruptedException {
 	Glocale = locale;
 	Gmodel = model;
 	
-	logger.info("Welcome home! The client locale is {}.", locale);
-    final String template = "Hello, %s!";
+	final String template = "Hello, %s!";
     
     checkInit();
 
@@ -229,9 +229,7 @@ public Diagnostics testDiagnostic(Locale locale, Model model) {
 	Glocale = locale;
 	Gmodel = model;
 	
-	checkInit();  
-	
-	homeDiag = new Diagnostics();
+	checkInit();  	
 
 	return homeDiag;
 	}
@@ -280,8 +278,10 @@ private ArrayList<RobotControllerTask> getRobotTasks(int robotNumber) {
 	private void checkInit() {
 		
 		if (FirstInit) {
-			homeDiag = new Diagnostics();
-			corsConfigurer();
+			if (!checkHomeDiag()) {
+				
+			}
+			//corsConfigurer();
 			// Acquire the list from ControllerService and add it to the model.
 			List<field.sample.amtapp1.domain.model.Controller> controllers = controllerServiceImpl.findAll(FirstInit);
 			
@@ -294,7 +294,7 @@ private ArrayList<RobotControllerTask> getRobotTasks(int robotNumber) {
 				
 				String TaskHeader = String.format("%-10s%-10s%-10s%-10s%-10s%-10s%-10s%-10s%-10s","Robot", "Main", "Sub", "Status", "Line", "", "", "", "");
 				
-				logger.info("Controllers = {" + controllers.toString() + "}");
+				//logger.info("Controllers = {" + controllers.toString() + "}");
 				
 				Gmodel.addAttribute("Jhdrs", JointHeader);
 				Gmodel.addAttribute("Chdrs", CartHeader);
@@ -305,6 +305,33 @@ private ArrayList<RobotControllerTask> getRobotTasks(int robotNumber) {
 			
 			FirstInit = false;
 		}
+	}
+	
+	private boolean checkHomeDiag() {
+		homeDiag = new Diagnostics();
+		Boolean success = true;	
+		
+		if (homeDiag.errorMessage.length() != 0) {
+			logger.error("Com start error message: " + homeDiag.errorMessage);
+			success = false;
+		}
+		
+		if (!homeDiag.hostIP.isReachable) {
+			logger.error("Com start HostIP is NOT REACHABLE");
+			success = false;
+		}
+		
+		if (homeDiag.restIP.isError) {
+			logger.error("Com start RestIP error code occurred");
+			success = false;
+		}
+		
+		if (!homeDiag.restIP.isReachable) {
+			logger.error("Com start RestIP is NOT REACHABLE");
+			success = false;
+		}
+		
+		return success;
 	}
 
 }

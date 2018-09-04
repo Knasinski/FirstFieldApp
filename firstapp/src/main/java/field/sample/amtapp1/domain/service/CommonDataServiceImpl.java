@@ -10,53 +10,64 @@ import field.sample.amtapp1.utility_programs.fieldInstance;
 
 @Service
 public class CommonDataServiceImpl implements CommonDataService {
-	private static final Logger logger = LoggerFactory.getLogger(CommonDataServiceImpl.class);
+	private static final Logger logger = (HomeController.debugLogging) ? LoggerFactory.getLogger(CommonDataServiceImpl.class) : null;
 	private static String BaseUrl = "";
 	private static final String InstanceStr = "/instance/";
 	
 	public StringBuffer getInstances(String classId) {
 		checkBaseUrl();
 		String url = BaseUrl + classId;
-//		logger.debug("getInstances : " + url);
+		if (HomeController.debugLogging)
+			logger.debug("getInstances : " + url);
+		
 		return getJson(url);
 	}
 	
 	public StringBuffer getInstance(String classId, String instanceId) {
 		checkBaseUrl();
 		String url = BaseUrl + classId + InstanceStr + instanceId;
-//		logger.debug("getInstance : " + url);
+		if (HomeController.debugLogging)
+			logger.debug("getInstance : " + url);
 		return getJson(url);
 	}
 	
 	public StringBuffer getLatest(String classId, String instanceId) {
 		checkBaseUrl();
 		String url = BaseUrl + classId + InstanceStr + instanceId + "/latest";
-//		logger.debug("getLatest : " + url);
+		if (HomeController.debugLogging)
+			logger.debug("getLatest : " + url);
 		return getJson(url);
 	}
 		
 	public StringBuffer getHistory(String classId, String instanceId) {
 		checkBaseUrl();
 		String url = BaseUrl + classId + InstanceStr + instanceId + "/history";
-//		logger.debug("getHistory : " + url);
+		if (HomeController.debugLogging)
+			logger.debug("getHistory : " + url);
 		return getJson(url);
 	}
 	
 	public StringBuffer getRelations(String classId, String instanceId) {
 		checkBaseUrl();
 		String url = BaseUrl + classId + InstanceStr + instanceId + "/relations";
+		if (HomeController.debugLogging)
+			logger.debug("getRelations : " + url);
+			
 		return getJson(url);
 	}
 	
 	public StringBuffer getMoments(String classId, String instanceId) {
 		String url = BaseUrl + classId + InstanceStr + instanceId + "/moments";
+		if (HomeController.debugLogging)
+			logger.debug("getMoments : " + url);
 		return getJson(url);
 	}
 		
 	public int getCount(String classId, String instanceId) {
 		checkBaseUrl();
 		String url = BaseUrl + classId + InstanceStr + instanceId + "/count";
-//		logger.debug("getCount : " + url);
+		if (HomeController.debugLogging)
+			logger.debug("getCount : " + url);
 		StringBuffer rc = getJson(url);
 		
 		if (rc.toString().contains("count") && rc.toString().contains(":")) {
@@ -68,7 +79,8 @@ public class CommonDataServiceImpl implements CommonDataService {
 				
 				return k;
 				} catch (Exception e) {
-					logger.warn("failedConvertToInt : " + rc);
+					if (HomeController.debugLogging)
+						logger.warn("failedConvertToInt : " + rc);
 				}
 		}
 		

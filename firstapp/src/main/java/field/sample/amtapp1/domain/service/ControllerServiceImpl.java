@@ -13,22 +13,19 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
+import field.sample.amtapp1.app.welcome.HomeController;
 import field.sample.amtapp1.domain.controller_servers.CncControllerServer;
 import field.sample.amtapp1.domain.controller_servers.RobotControllerServer;
-import field.sample.amtapp1.domain.controller_variables.RcVariable;
 import field.sample.amtapp1.domain.model.CommonDataController;
 import field.sample.amtapp1.domain.model.CommonDataControllerCnc;
 import field.sample.amtapp1.domain.model.CommonDataControllerHistory;
 import field.sample.amtapp1.domain.model.CommonDataControllerLatest;
 import field.sample.amtapp1.domain.model.CommonDataControllerRelations;
-//import field.sample.amtapp1.domain.model.CommonDataControllerHistory;
-//import field.sample.amtapp1.domain.model.CommonDataControllerLatest;
-//import field.sample.amtapp1.domain.model.CommonDataControllerRelations;
 import field.sample.amtapp1.domain.model.Controller;
 
 @Service
 public class ControllerServiceImpl implements ControllerService {	
-	private static final Logger logger = LoggerFactory.getLogger(ControllerServiceImpl.class);
+	private static final Logger logger = (HomeController.debugLogging) ? LoggerFactory.getLogger(ControllerServiceImpl.class) : null;
 
 	public static double meaningless = 0.0;
 	
@@ -48,7 +45,8 @@ public class ControllerServiceImpl implements ControllerService {
 		String controllersJson = commonDataServiceImpl.getInstances("controller").toString();
 		
 		if(controllersJson == null) {
-			logger.warn("failure : get controllers");
+			if (HomeController.debugLogging)
+				logger.warn("failure : get controllers");
 			return list;
 		}
 		
@@ -65,8 +63,11 @@ public class ControllerServiceImpl implements ControllerService {
 			controller.controller_type = getControllerType(controller);
 			
 			if ("controller_robot_controller".equals(controller.controller_type)) {
-				logger.debug("id : " + controller.id + "_" + i.toString());
-				logger.debug("name : " + controller.name);
+				if (HomeController.debugLogging) {
+					logger.debug("id : " + controller.id + "_" + i.toString());
+					logger.debug("name : " + controller.name);
+					}
+				
 				// Add the controller that has the id and name acquired from the common data to the list.
 				
 				if (RcListBuild) {
@@ -111,11 +112,13 @@ public class ControllerServiceImpl implements ControllerService {
 	}
 	
 	CommonDataController controller = new Gson().fromJson(instanceJson, CommonDataController.class);
-	logger.debug("id : " + controller.id);
-	logger.debug("name : " + controller.name);
-	logger.debug("type : " + controller.controller_type);
+	if (HomeController.debugLogging) {		
+		logger.debug("id : " + controller.id);
+		logger.debug("name : " + controller.name);
+		logger.debug("type : " + controller.controller_type);
+		}
 	
-	if(controller.link != null) {
+	if((controller.link != null) && HomeController.debugLogging) {
 		logger.debug("link.history : " + controller.link.history);
 		logger.debug("link.instance : " + controller.link.instance);
 		logger.debug("link.latest : " + controller.link.latest);
@@ -125,34 +128,41 @@ public class ControllerServiceImpl implements ControllerService {
 	// Acquisition of latest
 	String latestJson = commonDataServiceImpl.getLatest("controller",controllerId).toString();
 		if(latestJson == null) {
-		logger.warn("failure : get latest " + controllerId);
+			if (HomeController.debugLogging)
+				logger.warn("failure : get latest " + controllerId);
 		return;
 	}
 	
 	CommonDataControllerLatest latest = new Gson().fromJson(latestJson, CommonDataControllerLatest.class);
+
+	if (HomeController.debugLogging)
+		logger.debug("latest model : " + latest.model);
 	
-	logger.debug("latest model : " + latest.model);
 	// Acquisition of history
 	String historyJson = commonDataServiceImpl.getHistory("controller",controllerId).toString();
 	
 	if(historyJson == null) {
-		logger.warn("failure : get history " + controllerId);
+		if (HomeController.debugLogging)
+			logger.warn("failure : get history " + controllerId);
 		return;
-	}
+		}
 	
 	CommonDataControllerHistory[] histories = new Gson().fromJson(historyJson, CommonDataControllerHistory[].class);
-	
-	for (CommonDataControllerHistory history : histories) {
-		logger.debug("history unixtime : " + history.unixtime);
-		logger.debug("history link : " + history.link);
-		logger.debug("history relations : " + history.relations);
-	}
+
+	if (HomeController.debugLogging) {
+		for (CommonDataControllerHistory history : histories) {
+			logger.debug("history unixtime : " + history.unixtime);
+			logger.debug("history link : " + history.link);
+			logger.debug("history relations : " + history.relations);
+			}
+		}
 	
 	// Acquisition of relations
 	String relationsJson = commonDataServiceImpl.getRelations("controller",controllerId).toString();
 	
 	if(relationsJson == null) {
-		logger.warn("failure : get relations" + controllerId);
+		if (HomeController.debugLogging)
+			logger.warn("failure : get relations" + controllerId);
 		return;
 	}
 	
@@ -160,9 +170,10 @@ public class ControllerServiceImpl implements ControllerService {
 		
 		if (relations.controller_cnc != null) {
 			for(CommonDataControllerCnc controllerCnc : relations.controller_cnc) {
-				logger.debug("controller_cnc id : " + controllerCnc.id);
+				if (HomeController.debugLogging)
+					logger.debug("controller_cnc id : " + controllerCnc.id);
 				
-				if(controllerCnc.link != null) {
+				if((controllerCnc.link != null) && HomeController.debugLogging) {
 					logger.debug("controller_cnc history : " + controllerCnc.link.history);
 					logger.debug("controller_cnc instance : " + controllerCnc.link.instance);
 					logger.debug("controller_cnc latest : " + controllerCnc.link.latest);

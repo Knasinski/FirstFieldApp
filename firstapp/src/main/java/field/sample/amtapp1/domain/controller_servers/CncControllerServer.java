@@ -76,6 +76,12 @@ public class CncControllerServer {
 			StatusSensorIndividual ssi = new StatusSensorIndividual(mb);
 			
 			CncSensorDataArray[i] = new CncSensorData(ssi, csi);
+			
+			if (CncSensorDataArray[i].name.equals("Roller1Value") || 
+					CncSensorDataArray[i].name.equals("Roller2Value")	) {
+				
+				CncSensorDataArray[i].Add2Sum();
+			}
 		}
 	}
 	private void startSensorMonitoring() {

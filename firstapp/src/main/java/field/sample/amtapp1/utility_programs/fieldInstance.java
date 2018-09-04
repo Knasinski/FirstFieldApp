@@ -14,7 +14,7 @@ import field.sample.amtapp1.app.welcome.HomeController;
 
 
 public class fieldInstance {
-	private static final Logger logger = LoggerFactory.getLogger(fieldInstance.class);
+	private static final Logger logger = (HomeController.debugLogging) ? LoggerFactory.getLogger(fieldInstance.class) : null;
 	public boolean Good = false;
 	public StringBuffer result = new StringBuffer();
 	public int http_status=0;
@@ -31,9 +31,11 @@ public class fieldInstance {
 			con.connect();
 		} 
 		catch (IOException ioex) {
-			errorMessage = "openConnection : " + urlString;
-			logger.warn(errorMessage, ioex);
-			logIt();
+			if (HomeController.debugLogging) {
+				errorMessage = "openConnection : " + urlString;
+				logger.warn(errorMessage, ioex);
+				logIt();
+				}
 			return;
 		}
 		
@@ -47,18 +49,23 @@ public class fieldInstance {
 			in = con.getInputStream();
 		} 
 		catch (IOException ioex) {
-			errorMessage = "getInputStream : " + urlString;
-			logger.warn(errorMessage, ioex);
+			if (HomeController.debugLogging) {
+				errorMessage = "getInputStream : " + urlString;
+				logger.warn(errorMessage, ioex);
+				}
 		
 			try {
 				con.disconnect();
 			}
 			catch(Exception ex) {
-				errorMessage = "in.close() Exception : " + ex.toString();
-				logger.warn("in.close()", ex);
+				if (HomeController.debugLogging) {
+					errorMessage = "in.close() Exception : " + ex.toString();
+					logger.warn("in.close()", ex);
+					}
 			}
 
-			logIt();
+			if (HomeController.debugLogging)
+				logIt();
 			return;
 		}
 		
@@ -73,25 +80,31 @@ public class fieldInstance {
 				}
 		} 
 		catch (IOException ioex) {
-			logger.warn("readLine", ioex);
+			if (HomeController.debugLogging)
+				logger.warn("readLine", ioex);
 			
 			try {
 				in.close();
 			}
 			catch(Exception ex) {
-				errorMessage = "in.close() Exception : " + ex.toString();
-				logger.warn("in.close()", ex);
+				if (HomeController.debugLogging) {
+					errorMessage = "in.close() Exception : " + ex.toString();
+					logger.warn("in.close()", ex);
+					}
 			}
 			
 			try {
 				con.disconnect();
 			}
 			catch(Exception ex) {
-				errorMessage = "in.close() Exception : " + ex.toString();
-				logger.warn("in.close()", ex);
+				if (HomeController.debugLogging) {
+					errorMessage = "in.close() Exception : " + ex.toString();
+					logger.warn("in.close()", ex);
+					}
 			}
 
-			logIt();
+			if (HomeController.debugLogging)
+				logIt();
 			return;
 		}
 		
@@ -99,20 +112,25 @@ public class fieldInstance {
 			in.close();
 		}
 		catch(Exception ex) {
-			errorMessage = "in.close() Exception : " + ex.toString();
-			logger.warn("in.close()", ex);
+			if (HomeController.debugLogging) {
+				errorMessage = "in.close() Exception : " + ex.toString();
+				logger.warn("in.close()", ex);
+				}
 		}
 		
 		try {
 			con.disconnect();
 		}
 		catch(Exception ex) {
-			errorMessage = "in.close() Exception : " + ex.toString();
-			logger.warn("in.close()", ex);
+			if (HomeController.debugLogging) {
+				errorMessage = "in.close() Exception : " + ex.toString();
+				logger.warn("in.close()", ex);
+				}
 		}
 		
 		Good = true;
-		logIt();
+		if (HomeController.debugLogging)
+			logIt();
 	}
 	
 	private void logIt() {
